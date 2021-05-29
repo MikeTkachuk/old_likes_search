@@ -9,7 +9,8 @@ import tweepy as tw
 from tweepy.auth import OAuthHandler
 from tweepy.api import API
 
-sys.stderr.write('test string')
+sys.stdout.write('test string')
+sys.stdout.flush()
 try:
     app = flask.Flask('likes_search')
 
