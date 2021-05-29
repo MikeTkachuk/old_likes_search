@@ -1,4 +1,4 @@
 tweepy
 flask
-urllib
+cpython
 json
