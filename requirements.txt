@@ -2,3 +2,5 @@ tweepy
 flask
 numpy
 oauth2
+os
+sys
