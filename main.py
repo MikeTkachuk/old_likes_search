@@ -28,6 +28,7 @@ except e:
 
 @app.route('/')
 def render_index():
+    print("log test!!")
     app_callback_url = url_for('render_index',_external=True)
 
     consumer = oauth.Consumer(app.config["APP_CONSUMER_KEY"],app.config["APP_CONSUMER_SECRET"])
