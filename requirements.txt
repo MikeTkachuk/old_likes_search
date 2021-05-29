@@ -1,3 +1,4 @@
 tweepy
 flask
 numpy
+oauth2
