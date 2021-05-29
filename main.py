@@ -9,6 +9,7 @@ import tweepy as tw
 from tweepy.auth import OAuthHandler
 from tweepy.api import API
 
+sys.stderr.write('test string')
 try:
     app = flask.Flask('likes_search')
 
@@ -50,7 +51,7 @@ try:
                                      oauth_token=oauth_token,
                                      oauth_token_secret=oauth_token_secret)
 
-    
-    app.run()
+
+    app.run(debug=True)
 except e:
     sys.stdout.write(str(e))
