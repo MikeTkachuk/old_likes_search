@@ -14,3 +14,6 @@ app = flask.Flask('likes_search')
 @app.route('/')
 def render_index():
     flask.render_template('index.html')
+
+
+app.run()
