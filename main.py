@@ -128,7 +128,7 @@ def query():
     count = request.args.get('count')
 
     api = API(auth)
-    results = api.favorites(None,user_name,count,from_)
+    results = api.favorites(screen_name=user_name,count=count,since=from_)
     return flask.render_template('search.html',results=str(results[0]))
 
 
