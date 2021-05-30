@@ -5,7 +5,6 @@ from flask import Flask, render_template, request, url_for, session
 from flask_session import Session
 import oauth2 as oauth
 import urllib
-import redis
 
 import tweepy as tw
 from tweepy.auth import OAuthHandler
