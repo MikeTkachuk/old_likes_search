@@ -22,7 +22,6 @@ def write_cache(key,item,dir_='oauth_store'):
 
 
 app = flask.Flask(__name__)
-SESSION_TYPE = redis.Redis()
 app.config.from_object(__name__)
 Session(app)
 
