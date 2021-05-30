@@ -14,7 +14,7 @@ from tweepy.api import API
 
 def to_log(*msg):
     for i in msg:
-        print('************ ' + i)
+        print('************ ' + str(i))
     sys.stdout.flush()
 
 def write_cache(key,item,dir_='oauth_store'):
