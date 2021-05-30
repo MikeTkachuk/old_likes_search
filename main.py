@@ -29,11 +29,11 @@ app.config['APP_CONSUMER_SECRET'] = os.getenv(
     'CONSUMER_SECRET', '-1')
 to_log('got env vars',app.config['APP_CONSUMER_KEY'][0]+app.config['APP_CONSUMER_SECRET'][0])
 
-session['oauth_store'] = {}
-session['users'] = {}
+oauth_store = {}
 
 @app.route('/')
 def render_index():
+    global oauth_store
     app_callback_url = url_for('callback',_external=True)
 
     consumer = oauth.Consumer(app.config["APP_CONSUMER_KEY"],app.config["APP_CONSUMER_SECRET"])
@@ -51,8 +51,6 @@ def render_index():
         oauth_token = request_token[b'oauth_token'].decode('utf-8')
         oauth_token_secret = request_token[b'oauth_token_secret'].decode('utf-8')
         session['oauth_store'][oauth_token] = oauth_token_secret
-        if oauth_token not in oauth_store:
-            to_log('Could not store temp credentials')
 
     return flask.render_template('index.html',
                                  authorize_url=authorize_url,
@@ -60,15 +58,16 @@ def render_index():
 
 @app.route('/callback')
 def callback():
+    global oauth_store
     oauth_token = request.args.get('oauth_token')
     oauth_verifier = request.args.get('oauth_verifier')
-    oauth_denied = request.args.get('denied')
+
     if oauth_token in oauth_store:
         oauth_token_secret = oauth_store[oauth_token]
     else:
         oauth_token_secret = -1
         to_log('secret local copy not found')
-        render_index()
+        return render_template('index.html')
     consumer = oauth.Consumer(
         app.config['APP_CONSUMER_KEY'], app.config['APP_CONSUMER_SECRET'])
     token = oauth.Token(oauth_token, oauth_token_secret)
@@ -84,7 +83,7 @@ def callback():
     real_oauth_token = access_token[b'oauth_token'].decode('utf-8')
     real_oauth_token_secret = access_token[b'oauth_token_secret'].decode(
         'utf-8')
-    session['users'][user_id] = (real_oauth_token,real_oauth_token_secret)
+    oauth_store['user'] = (real_oauth_token,real_oauth_token_secret)
     to_log(*list(map(lambda x:x.decode('utf-8'),access_token.keys())))
     return render_template('index.html',user_id=user_id,screen_name=screen_name)
 
