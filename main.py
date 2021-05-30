@@ -116,6 +116,20 @@ def callback():
     return flask.redirect(url_for('render_index'))
 
 
+@app.route('/query')
+def query():
+    auth = OAuthHandler(app.config['APP_CONSUMER_KEY'], app.config['APP_CONSUMER_SECRET'])
+    auth.set_access_token(*session['user'])
+
+    user_name = request.args.get('user')
+    from_ = request.args.get('from')
+    count = request.args.get('count')
+
+    api = API(auth)
+    results = api.favorites(None,user_name,count,from_)
+    return flask.render_template('search.html',results=str(results[0]))
+
+
 if __name__ == '__main__':
     app.run()
 

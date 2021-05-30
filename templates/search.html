@@ -23,12 +23,24 @@
   </head>
 <body>
   <form action="/query" method='get'>
+    <text>User:</text>
     <input name='user' type='text'>
+    <br>
+    
+    <text>From:</text>
     <input name='from' type='text'>
+    <text>To:</text>
     <input name='to' type="text">
+    <br>
+    
+    <text>Count:</text>
     <input name='count' type='text'>
+    <br>
     <input type='submit'>
   </form>
   <a href='/signout' style='float:left;margin-left:25px;'>Switch account</a>
+  <div id='div-search-results'>
+  {{results}}
+  </div>
 </body>
 </html>
