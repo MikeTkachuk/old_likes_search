@@ -48,7 +48,7 @@ app.config['APP_CONSUMER_SECRET'] = os.getenv(
     'CONSUMER_SECRET', '-1')
 to_log('got env vars',app.config['APP_CONSUMER_KEY'][0]+app.config['APP_CONSUMER_SECRET'][0])
 
-with open('results.html','w') as f:
+with open('/app/templates/results.html','w') as f:
     f.write('')
 
 @app.route('/')
@@ -136,7 +136,7 @@ def query():
         tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
         to_log(tweet_url)
         results_html.append(api.get_oembed(url=tweet_url)["html"])
-    with open('results.html','w') as f:
+    with open('/app/templates/results.html','w') as f:
         for i in results:
             f.write(i)
             f.write(' ')
