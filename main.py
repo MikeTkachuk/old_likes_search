@@ -51,6 +51,8 @@ def render_index():
         oauth_token = request_token[b'oauth_token'].decode('utf-8')
         oauth_token_secret = request_token[b'oauth_token_secret'].decode('utf-8')
         oauth_store[oauth_token] = oauth_token_secret
+        if oauth_token not in oauth_store:
+            to_log('Could not store temp credentials')
 
     return flask.render_template('index.html',
                                  authorize_url=authorize_url,
