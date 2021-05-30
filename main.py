@@ -9,6 +9,10 @@ import tweepy as tw
 from tweepy.auth import OAuthHandler
 from tweepy.api import API
 
+def to_log(*msg):
+    for i in msg:
+        print('************ ' + i)
+
 
 app = flask.Flask(__name__)
 
@@ -22,11 +26,11 @@ try:
         'CONSUMER_KEY', '-1')
     app.config['APP_CONSUMER_SECRET'] = os.getenv(
         'CONSUMER_SECRET', '-1')
-    print('got env vars')
-except e:
+    to_log('got env vars',app.config['APP_CONSUMER_KEY'][0]+app.config['APP_CONSUMER_SECRET'][0])
+except KeyError:
     app.config['APP_CONSUMER_KEY'] = "JfbzKUTtNl3JXISoRpU"+str(2)+"eB67F" + '1'
     app.config['APP_CONSUMER_SECRET'] = "OdvZEgIIg3qu7GNzPLvn31U0"+str(9)+"rin6FNyFBMvkl9Gxkm1nAlAPz" + '9'
-    print('hardcoded incorrect')
+    to_log('hardcoded incorrect')
 
 
 @app.route('/')
@@ -40,8 +44,8 @@ def render_index():
         "oauth_callback": app_callback_url}))
 
     if resp['status'] != 200:
-        print("authorization unsuccessful")
-        print(app_callback_url)
+        to_log("authorization unsuccessful")
+        to_log(app_callback_url)
         sys.stdout.flush()
         return flask.render_template('index.html')
     else:
