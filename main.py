@@ -61,6 +61,9 @@ to_log('got env vars',app.config['APP_CONSUMER_KEY'][0]+app.config['APP_CONSUMER
 def render_index():
     with open('/app/templates/results.html','w') as f:
         f.write('')
+    with open('/app/templates/results.html', 'r') as f:
+        to_log(next(iter(f.readlines())))
+
     if session.get('user',None) is None:
         return flask.redirect(url_for('signin'))
     else:
@@ -147,6 +150,7 @@ def query():
         results_html.append(api.get_oembed(url=tweet_url)["html"])
     with open('/app/templates/results.html','w') as f:
         for i in results_html:
+            to_log(len(i))
             f.write(i)
             f.write(' ')
 
