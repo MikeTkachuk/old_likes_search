@@ -54,7 +54,7 @@ def render_index():
     if session.get('user',None) is None:
         return flask.redirect(url_for('signin'))
     else:
-        return flask.render_template('search.html')
+        return flask.render_template('search.html',results='')
 
 
 @app.route('/signin')
