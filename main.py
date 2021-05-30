@@ -63,9 +63,12 @@ def callback():
     oauth_token = request.args.get('oauth_token')
     oauth_verifier = request.args.get('oauth_verifier')
     oauth_denied = request.args.get('denied')
-
-    oauth_token_secret = oauth_store[oauth_token]
-
+    if oauth_token in oauth_store:
+        oauth_token_secret = oauth_store[oauth_token]
+    else:
+        oauth_token_secret = -1
+        to_log('secret local copy not found')
+        render_index()
     consumer = oauth.Consumer(
         app.config['APP_CONSUMER_KEY'], app.config['APP_CONSUMER_SECRET'])
     token = oauth.Token(oauth_token, oauth_token_secret)
