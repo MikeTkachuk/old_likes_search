@@ -12,6 +12,7 @@ from tweepy.api import API
 def to_log(*msg):
     for i in msg:
         print('************ ' + i)
+    sys.stdout.flush()
 
 
 app = flask.Flask(__name__)
@@ -43,7 +44,6 @@ def render_index():
 
     if int(resp['status']) != 200:
         to_log("authorization unsuccessful",f": resp status {resp['status']}, msg: {content.decode('utf-8')}")
-        sys.stdout.flush()
         return flask.render_template('index.html')
     else:
         to_log("SUCCESS",f": resp status {resp['status']}, msg: {content.decode('utf-8')}")
@@ -51,8 +51,6 @@ def render_index():
         oauth_token = request_token[b'oauth_token'].decode('utf-8')
         oauth_token_secret = request_token[b'oauth_token_secret'].decode('utf-8')
         oauth_store[oauth_token] = oauth_token_secret
-        print(oauth_store)
-        sys.stdout.flush()
 
     return flask.render_template('index.html',
                                  authorize_url=authorize_url,
@@ -63,8 +61,7 @@ def callback():
     oauth_token = request.args.get('oauth_token')
     oauth_verifier = request.args.get('oauth_verifier')
     oauth_denied = request.args.get('denied')
-    print(oauth_store)
-    sys.stdout.flush()
+
     oauth_token_secret = oauth_store[oauth_token]
 
     consumer = oauth.Consumer(
@@ -83,6 +80,7 @@ def callback():
     real_oauth_token_secret = access_token[b'oauth_token_secret'].decode(
         'utf-8')
     users[user_id] = (real_oauth_token,real_oauth_token_secret)
+    to_log(list(map(lambda x:x.decode('utf-8'),access_token.keys())))
     return render_template('index.html',user_id=user_id,screen_name=screen_name)
 
 
