@@ -60,7 +60,9 @@ def render_index():
 @app.route('/signin')
 def signin():
     app_callback_url = url_for('callback', _external=True)
-
+    """dgfs"""
+    to_log(app_callback_url)
+    """sfgd"""
     consumer = oauth.Consumer(app.config["APP_CONSUMER_KEY"], app.config["APP_CONSUMER_SECRET"])
     client = oauth.Client(consumer)
 
