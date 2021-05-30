@@ -52,29 +52,35 @@ to_log('got env vars',app.config['APP_CONSUMER_KEY'][0]+app.config['APP_CONSUMER
 @app.route('/')
 def render_index():
     if not session.get('authorized',False):
-        app_callback_url = url_for('callback',_external=True)
-
-        consumer = oauth.Consumer(app.config["APP_CONSUMER_KEY"],app.config["APP_CONSUMER_SECRET"])
-        client = oauth.Client(consumer)
-
-        resp, content = client.request(request_token_url, "POST", body=urllib.parse.urlencode({
-            "oauth_callback": app_callback_url}))
-
-        if int(resp['status']) != 200:
-            to_log("authorization unsuccessful",f": resp status {resp['status']}, msg: {content.decode('utf-8')}")
-            return flask.render_template('index.html')
-        else:
-            to_log("SUCCESS",f": resp status {resp['status']}, msg: {content.decode('utf-8')}")
-            request_token = dict(urllib.parse.parse_qsl(content))
-            oauth_token = request_token[b'oauth_token'].decode('utf-8')
-            oauth_token_secret = request_token[b'oauth_token_secret'].decode('utf-8')
-            write_cache(oauth_token,oauth_token_secret)
-
-        return flask.render_template('index.html',
-                                     authorize_url=authorize_url,
-                                     oauth_token=oauth_token)
+        return flask.redirect(url_for('signin'))
     else:
         return flask.render_template('search.html')
+
+
+@app.route('/signin')
+def signin():
+    app_callback_url = url_for('callback', _external=True)
+
+    consumer = oauth.Consumer(app.config["APP_CONSUMER_KEY"], app.config["APP_CONSUMER_SECRET"])
+    client = oauth.Client(consumer)
+
+    resp, content = client.request(request_token_url, "POST", body=urllib.parse.urlencode({
+        "oauth_callback": app_callback_url}))
+
+    if int(resp['status']) != 200:
+        to_log("authorization unsuccessful", f": resp status {resp['status']}, msg: {content.decode('utf-8')}")
+        return flask.render_template('index.html')
+    else:
+        to_log("SUCCESS", f": resp status {resp['status']}, msg: {content.decode('utf-8')}")
+        request_token = dict(urllib.parse.parse_qsl(content))
+        oauth_token = request_token[b'oauth_token'].decode('utf-8')
+        oauth_token_secret = request_token[b'oauth_token_secret'].decode('utf-8')
+        write_cache(oauth_token, oauth_token_secret)
+
+    return flask.render_template('index.html',
+                                 authorize_url=authorize_url,
+                                 oauth_token=oauth_token)
+
 
 @app.route('/callback')
 def callback():
@@ -87,7 +93,7 @@ def callback():
     else:
         oauth_token_secret = -1
         to_log('secret local copy not found')
-        return flask.redirect('/')
+        return flask.redirect(url_for('render_index'))
     consumer = oauth.Consumer(
         app.config['APP_CONSUMER_KEY'], app.config['APP_CONSUMER_SECRET'])
     token = oauth.Token(oauth_token, oauth_token_secret)
@@ -105,7 +111,7 @@ def callback():
         'utf-8')
     session['user'] = (real_oauth_token,real_oauth_token_secret)
     session['authorized'] = True
-    return flask.redirect('/')
+    return flask.redirect(url_for('render_index'))
 
 
 if __name__ == '__main__':
