@@ -6,6 +6,7 @@ from flask_session import Session
 import oauth2 as oauth
 import urllib
 import redis
+import datetime
 
 import tweepy as tw
 from tweepy.auth import OAuthHandler
@@ -20,6 +21,12 @@ def write_cache(key,item,dir_='oauth_store'):
     if session.get(dir_,None) is None:
         session[dir_] = {}
     session[dir_][key] = item
+
+
+def date_to_id(date:str):
+    return int(
+        datetime.datetime.strptime(date,"%d/%m/%y").timestamp()*2**(64-41)
+    )
 
 
 app = flask.Flask(__name__)
@@ -127,11 +134,12 @@ def query():
     auth.set_access_token(*session['user'])
 
     user_name = request.args.get('user')
-    from_ = request.args.get('from')
-    count = request.args.get('count')
+    from_ = date_to_id(request.args.get('from',None))
+    to = date_to_id(request.args.get('to',None))
+    count = request.args.get('count',None)
 
     api = API(auth)
-    results = api.favorites(screen_name=user_name,count=count,since=from_)
+    results = api.favorites(screen_name=user_name,count=count,since=from_,max_id=to)
     results_html = []
     for tweet in results:
         tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
