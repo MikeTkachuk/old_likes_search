@@ -38,9 +38,9 @@
   </form>
   <a href='/signout' style='float:left;margin-left:25px;'>Switch account</a>
   <div id='div-search-results'>
-    {%if results is not ''%}
-  {% include results%}
-    {%endif%}
+    {% if results is not '' %}
+  {% include results %} 
+    {% endif %}
   </div>
 </body>
 </html>
