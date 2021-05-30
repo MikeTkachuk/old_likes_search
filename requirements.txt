@@ -1,5 +1,6 @@
 tweepy
 flask
+flask-session
 numpy
 oauth2
 gunicorn
