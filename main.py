@@ -51,7 +51,7 @@ to_log('got env vars',app.config['APP_CONSUMER_KEY'][0]+app.config['APP_CONSUMER
 
 @app.route('/')
 def render_index():
-    if not session.get('authorized',False):
+    if session.get('user',None) is None:
         return flask.redirect(url_for('signin'))
     else:
         return flask.render_template('search.html')
@@ -82,6 +82,11 @@ def signin():
                                  oauth_token=oauth_token)
 
 
+@app.route('/signout')
+def signout():
+    session['user'] = None
+    return flask.redirect(url_for('render_index'))
+
 @app.route('/callback')
 def callback():
 
@@ -110,7 +115,6 @@ def callback():
     real_oauth_token_secret = access_token[b'oauth_token_secret'].decode(
         'utf-8')
     session['user'] = (real_oauth_token,real_oauth_token_secret)
-    session['authorized'] = True
     return flask.redirect(url_for('render_index'))
 
 
