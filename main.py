@@ -61,7 +61,8 @@ def callback():
     oauth_token = request.args.get('oauth_token')
     oauth_verifier = request.args.get('oauth_verifier')
     oauth_denied = request.args.get('denied')
-
+    print(oauth_store)
+    sys.stdout.flush()
     oauth_token_secret = oauth_store[oauth_token]
 
     consumer = oauth.Consumer(
