@@ -87,6 +87,7 @@ def signout():
     session['user'] = None
     return flask.redirect(url_for('render_index'))
 
+
 @app.route('/callback')
 def callback():
 
@@ -107,9 +108,6 @@ def callback():
 
     resp, content = client.request(access_token_url, "POST")
     access_token = dict(urllib.parse.parse_qsl(content))
-
-    screen_name = access_token[b'screen_name'].decode('utf-8')
-    user_id = access_token[b'user_id'].decode('utf-8')
 
     real_oauth_token = access_token[b'oauth_token'].decode('utf-8')
     real_oauth_token_secret = access_token[b'oauth_token_secret'].decode(

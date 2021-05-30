@@ -19,11 +19,16 @@
 
   return t;
 }(document, "script", "twitter-wjs"));</script>
+    <style href="/static/css/form.css"></style>
   </head>
 <body>
-  <form acrtio="#">
+  <form action="/query" method='get'>
+    <input name='user' type='text'>
+    <input name='from' type='text'>
+    <input name='to' type="text">
+    <input name='count' type='text'>
     <input type='submit'>
   </form>
-  <a href='/signout'>Switch account</a>
+  <a href='/signout' style='float:left;margin-left:25px;'>Switch account</a>
 </body>
 </html>
