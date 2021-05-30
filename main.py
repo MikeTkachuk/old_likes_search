@@ -25,7 +25,7 @@ def write_cache(key,item,dir_='oauth_store'):
 
 def date_to_id(date:str):
     return int(
-        datetime.datetime.strptime(date,"%d/%m/%y").timestamp()*2**(64-41)
+        datetime.datetime.strptime(date,"%d/%m/%y").timestamp()*2**(64-41)*100
     )
 
 
@@ -137,7 +137,7 @@ def query():
     from_ = date_to_id(request.args.get('from',None))
     to = date_to_id(request.args.get('to',None))
     count = request.args.get('count',None)
-
+    to_log(from_,to)
     api = API(auth)
     results = api.favorites(screen_name=user_name,count=count,since=from_,max_id=to)
     results_html = []
