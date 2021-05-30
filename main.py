@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, url_for, session
 from flask_session import Session
 import oauth2 as oauth
 import urllib
+import redis
 
 import tweepy as tw
 from tweepy.auth import OAuthHandler
@@ -15,8 +16,15 @@ def to_log(*msg):
         print('************ ' + i)
     sys.stdout.flush()
 
+def write_cache(key,item,dir_='oauth_store'):
+    if session.get(dir_,None) is None:
+        session[dir_] = {}
+    session[dir_][key] = item
+
 
 app = flask.Flask(__name__)
+SESSION_TYPE = redis.Redis()
+app.config.from_object(__name__)
 Session(app)
 
 request_token_url = 'https://api.twitter.com/oauth/request_token'
@@ -31,7 +39,6 @@ app.config['APP_CONSUMER_SECRET'] = os.getenv(
     'CONSUMER_SECRET', '-1')
 to_log('got env vars',app.config['APP_CONSUMER_KEY'][0]+app.config['APP_CONSUMER_SECRET'][0])
 
-session['oauth_store'] = {}
 
 @app.route('/')
 def render_index():
@@ -51,7 +58,7 @@ def render_index():
         request_token = dict(urllib.parse.parse_qsl(content))
         oauth_token = request_token[b'oauth_token'].decode('utf-8')
         oauth_token_secret = request_token[b'oauth_token_secret'].decode('utf-8')
-        session['oauth_store'][oauth_token] = oauth_token_secret
+        write_cache(oauth_token,oauth_token_secret)
 
     return flask.render_template('index.html',
                                  authorize_url=authorize_url,
