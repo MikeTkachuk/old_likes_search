@@ -50,7 +50,7 @@ def render_index():
         request_token = dict(urllib.parse.parse_qsl(content))
         oauth_token = request_token[b'oauth_token'].decode('utf-8')
         oauth_token_secret = request_token[b'oauth_token_secret'].decode('utf-8')
-        session['oauth_store'][oauth_token] = oauth_token_secret
+        oauth_store[oauth_token] = oauth_token_secret
 
     return flask.render_template('index.html',
                                  authorize_url=authorize_url,
