@@ -129,7 +129,12 @@ def query():
 
     api = API(auth)
     results = api.favorites(screen_name=user_name,count=count,since=from_)
-    return flask.render_template('search.html',results=str(results[0]))
+    results_html = []
+    for tweet in results:
+        tweet_id = tweet["id"]
+        results_html.append(api.get_oembed(url=tweet_id)["html"])
+
+    return flask.render_template('search.html',results=str(results_html[0]))
 
 
 if __name__ == '__main__':
