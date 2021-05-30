@@ -132,6 +132,7 @@ def query():
     results_html = []
     for tweet in results:
         tweet_id = tweet.id
+        to_log(tweet_id)
         results_html.append(api.get_oembed(url=tweet_id)["html"])
 
     return flask.render_template('search.html',results=str(results_html[0]))
