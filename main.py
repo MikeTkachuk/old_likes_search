@@ -9,10 +9,8 @@ import tweepy as tw
 from tweepy.auth import OAuthHandler
 from tweepy.api import API
 
-sys.stdout.write('test string')
-sys.stdout.flush()
 
-app = flask.Flask('likes_search')
+app = flask.Flask(__name__)
 
 request_token_url = 'https://api.twitter.com/oauth/request_token'
 access_token_url = 'https://api.twitter.com/oauth/access_token'
@@ -29,7 +27,7 @@ except e:
     app.config['APP_CONSUMER_SECRET'] = "OdvZEgIIg3qu7GNzPLvn31U0"+str(9)+"rin6FNyFBMvkl9Gxkm1nAlAPz" + '9'
 
 
-@app.route('/a')
+@app.route('/')
 def render_index():
     app_callback_url = url_for('render_index',_external=True)
 
@@ -41,6 +39,7 @@ def render_index():
 
     if resp['status'] != 200:
         print("authorization unsuccessful")
+        sys.stdout.flush()
         return flask.render_template('index.html')
     else:
         request_token = dict(urllib.parse.parse_qsl(content))
@@ -52,10 +51,7 @@ def render_index():
                                  oauth_token=oauth_token,
                                  oauth_token_secret=oauth_token_secret)
 
-@app.route('/')
-def test():
-    return render_template('index.html')
 
-
-app.run()
+if __name__ == '__main__':
+    app.run()
 
