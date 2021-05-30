@@ -131,9 +131,9 @@ def query():
     results = api.favorites(screen_name=user_name,count=count,since=from_)
     results_html = []
     for tweet in results:
-        tweet_id = str(tweet.id)
-        to_log(tweet_id)
-        results_html.append(api.get_oembed(url=tweet_id)["html"])
+        tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
+        to_log(tweet_url)
+        results_html.append(api.get_oembed(url=tweet_url)["html"])
 
     return flask.render_template('search.html',results=str(results_html[0]))
 
