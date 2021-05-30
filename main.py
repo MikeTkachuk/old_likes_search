@@ -153,7 +153,8 @@ def query():
             to_log(f"query: tweet# = {len(i)}")
             f.write(i)
             f.write(' ')
-
+    with open('/app/templates/results.html', 'r') as f:
+        to_log(f"query: results_len = {len(f.readlines())}")
     return flask.render_template('results.html')
 
 
