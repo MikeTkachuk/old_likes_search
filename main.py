@@ -137,7 +137,7 @@ def query():
         to_log(tweet_url)
         results_html.append(api.get_oembed(url=tweet_url)["html"])
     with open('/app/templates/results.html','w') as f:
-        for i in results:
+        for i in results_html:
             f.write(i)
             f.write(' ')
     return flask.render_template('search.html',results='results.html')
