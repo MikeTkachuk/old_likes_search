@@ -40,7 +40,7 @@ def render_index():
     resp, content = client.request(request_token_url, "POST", body=urllib.parse.urlencode({
         "oauth_callback": app_callback_url}))
 
-    if resp['status'] != 200:
+    if int(resp['status']) != 200:
         to_log("authorization unsuccessful",f": resp status {resp['status']}, msg: {content.decode('utf-8')}")
         sys.stdout.flush()
         return flask.render_template('index.html')
