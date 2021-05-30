@@ -131,7 +131,7 @@ def query():
     results = api.favorites(screen_name=user_name,count=count,since=from_)
     results_html = []
     for tweet in results:
-        tweet_id = tweet.id
+        tweet_id = str(tweet.id)
         to_log(tweet_id)
         results_html.append(api.get_oembed(url=tweet_id)["html"])
 
