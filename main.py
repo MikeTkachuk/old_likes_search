@@ -134,8 +134,11 @@ def query():
         tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
         to_log(tweet_url)
         results_html.append(api.get_oembed(url=tweet_url)["html"])
-
-    return flask.render_template('search.html',results=str(results_html[0]))
+    with open('results.html','w') as f:
+        for i in results:
+            f.write(i)
+            f.write(' ')
+    return flask.render_template('search.html',results='results.html')
 
 
 if __name__ == '__main__':
