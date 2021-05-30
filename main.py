@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, url_for, session
 from flask_session import Session
 import oauth2 as oauth
 import urllib
+import redis
 
 import tweepy as tw
 from tweepy.auth import OAuthHandler
@@ -22,6 +23,8 @@ def write_cache(key,item,dir_='oauth_store'):
 
 
 app = flask.Flask(__name__)
+r = redis.from_url(os.environ.get("REDIS_URL"))
+SESSION_TYPE = r
 app.config.from_object(__name__)
 Session(app)
 
