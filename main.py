@@ -22,9 +22,11 @@ try:
         'CONSUMER_KEY', '-1')
     app.config['APP_CONSUMER_SECRET'] = os.getenv(
         'CONSUMER_SECRET', '-1')
+    print('got env vars')
 except e:
     app.config['APP_CONSUMER_KEY'] = "JfbzKUTtNl3JXISoRpU"+str(2)+"eB67F" + '1'
     app.config['APP_CONSUMER_SECRET'] = "OdvZEgIIg3qu7GNzPLvn31U0"+str(9)+"rin6FNyFBMvkl9Gxkm1nAlAPz" + '9'
+    print('hardcoded incorrect')
 
 
 @app.route('/')
@@ -39,6 +41,7 @@ def render_index():
 
     if resp['status'] != 200:
         print("authorization unsuccessful")
+        print(app_callback_url)
         sys.stdout.flush()
         return flask.render_template('index.html')
     else:
