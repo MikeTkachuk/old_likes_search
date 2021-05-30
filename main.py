@@ -48,11 +48,12 @@ app.config['APP_CONSUMER_SECRET'] = os.getenv(
     'CONSUMER_SECRET', '-1')
 to_log('got env vars',app.config['APP_CONSUMER_KEY'][0]+app.config['APP_CONSUMER_SECRET'][0])
 
-with open('/app/templates/results.html','w') as f:
-    f.write('')
+
 
 @app.route('/')
 def render_index():
+    with open('/app/templates/results.html','w') as f:
+        f.write('')
     if session.get('user',None) is None:
         return flask.redirect(url_for('signin'))
     else:
@@ -140,9 +141,7 @@ def query():
         for i in results_html:
             f.write(i)
             f.write(' ')
-    with open('/app/templates/results.html','r') as f:
-        for i in f.readlines():
-            to_log(i)
+
     return flask.render_template('search.html',results='results.html')
 
 
