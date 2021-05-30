@@ -154,7 +154,7 @@ def query():
             f.write(i)
             f.write(' ')
 
-    return flask.render_template('search.html',results='results.html')
+    return flask.render_template('results.html')
 
 
 if __name__ == '__main__':
