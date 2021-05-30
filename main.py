@@ -29,6 +29,7 @@ app.config['APP_CONSUMER_SECRET'] = os.getenv(
 to_log('got env vars',app.config['APP_CONSUMER_KEY'][0]+app.config['APP_CONSUMER_SECRET'][0])
 
 oauth_store = {}
+users = {}
 
 @app.route('/')
 def render_index():
@@ -49,7 +50,7 @@ def render_index():
         request_token = dict(urllib.parse.parse_qsl(content))
         oauth_token = request_token[b'oauth_token'].decode('utf-8')
         oauth_token_secret = request_token[b'oauth_token_secret'].decode('utf-8')
-        oauth_store["oauth_secret"] = oauth_token_secret
+        oauth_store[oauth_token] = oauth_token_secret
 
     return flask.render_template('index.html',
                                  authorize_url=authorize_url,
@@ -57,7 +58,29 @@ def render_index():
 
 @app.route('/callback')
 def callback():
-    return render_template('index.html')
+    oauth_token = request.args.get('oauth_token')
+    oauth_verifier = request.args.get('oauth_verifier')
+    oauth_denied = request.args.get('denied')
+
+    oauth_token_secret = oauth_store[oauth_token]
+
+    consumer = oauth.Consumer(
+        app.config['APP_CONSUMER_KEY'], app.config['APP_CONSUMER_SECRET'])
+    token = oauth.Token(oauth_token, oauth_token_secret)
+    token.set_verifier(oauth_verifier)
+    client = oauth.Client(consumer, token)
+
+    resp, content = client.request(access_token_url, "POST")
+    access_token = dict(urllib.parse.parse_qsl(content))
+
+    screen_name = access_token[b'screen_name'].decode('utf-8')
+    user_id = access_token[b'user_id'].decode('utf-8')
+
+    real_oauth_token = access_token[b'oauth_token'].decode('utf-8')
+    real_oauth_token_secret = access_token[b'oauth_token_secret'].decode(
+        'utf-8')
+    users[user_id] = (real_oauth_token,real_oauth_token_secret)
+    return render_template('index.html',user_id=user_id,screen_name=screen_name)
 
 
 if __name__ == '__main__':
