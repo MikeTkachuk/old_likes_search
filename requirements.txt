@@ -2,3 +2,4 @@ tweepy
 flask
 numpy
 oauth2
+gunicorn
