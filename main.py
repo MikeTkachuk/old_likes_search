@@ -23,9 +23,14 @@ def write_cache(key,item,dir_='oauth_store'):
 
 
 app = flask.Flask(__name__)
-r = redis.from_url(os.environ.get("REDIS_URL"))
-SESSION_TYPE = r
+
+app.secret_key = "gs67hduyhw9nn7u"
 app.config.from_object(__name__)
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_USE_SIGNER'] = True
+r = redis.from_url(os.environ.get("REDIS_URL"))
+app.config['SESSION_REDIS'] = r
 Session(app)
 
 request_token_url = 'https://api.twitter.com/oauth/request_token'
