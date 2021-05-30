@@ -48,6 +48,8 @@ app.config['APP_CONSUMER_SECRET'] = os.getenv(
     'CONSUMER_SECRET', '-1')
 to_log('got env vars',app.config['APP_CONSUMER_KEY'][0]+app.config['APP_CONSUMER_SECRET'][0])
 
+with open('results.html','w') as f:
+    f.write('')
 
 @app.route('/')
 def render_index():
