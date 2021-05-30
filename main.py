@@ -82,7 +82,7 @@ def callback():
     real_oauth_token_secret = access_token[b'oauth_token_secret'].decode(
         'utf-8')
     users[user_id] = (real_oauth_token,real_oauth_token_secret)
-    to_log(list(map(lambda x:x.decode('utf-8'),access_token.keys())))
+    to_log(*list(map(lambda x:x.decode('utf-8'),access_token.keys())))
     return render_template('index.html',user_id=user_id,screen_name=screen_name)
 
 
