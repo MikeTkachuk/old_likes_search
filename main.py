@@ -1,7 +1,7 @@
 import sys
 import os
 import flask
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, url_for, session
 import oauth2 as oauth
 import urllib
 
@@ -29,8 +29,8 @@ app.config['APP_CONSUMER_SECRET'] = os.getenv(
     'CONSUMER_SECRET', '-1')
 to_log('got env vars',app.config['APP_CONSUMER_KEY'][0]+app.config['APP_CONSUMER_SECRET'][0])
 
-oauth_store = {}
-users = {}
+session['oauth_store'] = {}
+session['users'] = {}
 
 @app.route('/')
 def render_index():
@@ -50,7 +50,7 @@ def render_index():
         request_token = dict(urllib.parse.parse_qsl(content))
         oauth_token = request_token[b'oauth_token'].decode('utf-8')
         oauth_token_secret = request_token[b'oauth_token_secret'].decode('utf-8')
-        oauth_store[oauth_token] = oauth_token_secret
+        session['oauth_store'][oauth_token] = oauth_token_secret
         if oauth_token not in oauth_store:
             to_log('Could not store temp credentials')
 
@@ -84,7 +84,7 @@ def callback():
     real_oauth_token = access_token[b'oauth_token'].decode('utf-8')
     real_oauth_token_secret = access_token[b'oauth_token_secret'].decode(
         'utf-8')
-    users[user_id] = (real_oauth_token,real_oauth_token_secret)
+    session['users'][user_id] = (real_oauth_token,real_oauth_token_secret)
     to_log(*list(map(lambda x:x.decode('utf-8'),access_token.keys())))
     return render_template('index.html',user_id=user_id,screen_name=screen_name)
 
