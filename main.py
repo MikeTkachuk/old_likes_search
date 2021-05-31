@@ -148,8 +148,15 @@ def query():
                               "to":to
                               }
 
+    favorites_params = {"screen_name":user_name,
+                        "count":10}
+    if from_ != '':
+        favorites_params["since"] = date_to_id(from_)
+    if to != '':
+        favorites_params["max_id"] = date_to_id(to)
+
     api = API(auth)
-    results = api.favorites(screen_name=user_name,count=10,since=from_,max_id=to)
+    results = api.favorites(**favorites_params)
     results_html = []
     for tweet in results:
         tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
