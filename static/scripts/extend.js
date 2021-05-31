@@ -5,4 +5,5 @@ function handle_extend(){
   re.onload = () => {
   var text = re.responseText;
   document.getElementById("results").innerHTML += text;
+  }
 }
