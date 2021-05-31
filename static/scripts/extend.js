@@ -6,7 +6,7 @@ function handle_extend(){
   re.onload = () => {
   var red = JSON.parse(re.responseText);
   var start = count_extensions;
-  for (const tweet of red){
+  for (let tweet=0;tweet<red.length;tweet++){
      document.getElementById("results").innerHTML +='<div id="results_'+count_extensions.toString()+'">' + red[tweet] + '</div>';
     count_extensions += 1;
   }
