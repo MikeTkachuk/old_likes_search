@@ -24,24 +24,21 @@
 <body>
   <form action="/query" method='get'>
     <text>User:</text>
-    <input name='user' type='text'>
+    <input name='user' type='text' value={{user}}>
     <br>
     
     <text>From:</text>
-    <input name='from' type='text'>
+    <input name='from' type='date' value={{from}}>
     <br>
     
     <text>To:</text>
-    <input name='to' type='text'>
+    <input name='to' type='date' value={{to}}>
     <br>
     
-    <text>Count:</text>
-    <input name='count' type='text'>
-    <br>
     <input type='submit'>
   </form>
   <a href='/signout' style='float:left;margin-left:25px;'>Switch account</a>
-  <a href='/' style='float:left;margin-left:25px;'>Reset</a>
+  <a href='/' style='float:left;margin-left:25px;'>Reset</a> <br><br>
   {% include "results.html" without context %}
 </body>
 </html>

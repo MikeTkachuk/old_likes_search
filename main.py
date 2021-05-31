@@ -25,7 +25,7 @@ def write_cache(key,item,dir_='oauth_store'):
 
 def date_to_id(date:str):
     return int(
-        (datetime.datetime.strptime(date,"%d/%m/%y").timestamp()-1288834975)*2**22*1000
+        (datetime.datetime.strptime(date,"%Y-%m-%d").timestamp()-1288834975)*2**22*1000
     )
 
 
@@ -62,10 +62,15 @@ def render_index():
     with open('/app/templates/results.html','w') as f:
         f.write('')
 
+    session["form_values"] = {"user":'',
+                              "from":'',
+                              "to":''
+                              }
+
     if session.get('user',None) is None:
         return flask.redirect(url_for('signin'))
     else:
-        return flask.render_template('search.html')
+        return flask.render_template('search.html',**session["form_values"])
 
 
 @app.route('/signin')
@@ -134,13 +139,17 @@ def query():
     auth = OAuthHandler(app.config['APP_CONSUMER_KEY'], app.config['APP_CONSUMER_SECRET'])
     auth.set_access_token(*session['user'])
 
-    user_name = request.args.get('user')
-    from_ = date_to_id(request.args.get('from',None))
-    to = date_to_id(request.args.get('to',None))
-    count = request.args.get('count',None)
-    to_log(from_,to)
+    user_name = request.args.get('user','')
+    from_ = request.args.get('from','')
+    to = request.args.get('to','')
+
+    session["form_values"] = {"user":user_name,
+                              "from":from_,
+                              "to":to
+                              }
+
     api = API(auth)
-    results = api.favorites(screen_name=user_name,count=count,since=from_,max_id=to)
+    results = api.favorites(screen_name=user_name,count=10,since=from_,max_id=to)
     results_html = []
     for tweet in results:
         tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
@@ -148,10 +157,9 @@ def query():
         results_html.append(api.get_oembed(url=tweet_url)["html"])
     with open('/app/templates/results.html','w') as f:
         for i in results_html:
-            to_log(f"query: tweet# = {len(i)}")
             f.write(i)
             f.write(' ')
-    return flask.render_template('search.html')
+    return flask.render_template('search.html', **session["form_values"])
 
 
 if __name__ == '__main__':
