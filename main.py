@@ -1,12 +1,13 @@
 import sys
 import os
 import flask
-from flask import Flask, render_template, request, url_for, session
+from flask import Flask, render_template, request, url_for, session,jsonify
 from flask_session import Session
 import oauth2 as oauth
 import urllib
 import redis
 import datetime
+
 
 import tweepy as tw
 from tweepy.auth import OAuthHandler
@@ -202,9 +203,8 @@ def query_extend():
         for i in results_html:
             f.write(i)
             f.write('\n')
-    final_html = ''.join(results_html)
-    
-    return final_html
+
+    return jsonify(results_html)
 
 
 if __name__ == '__main__':
