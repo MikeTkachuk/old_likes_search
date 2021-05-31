@@ -7,6 +7,6 @@ function handle_extend(){
   var text = re.responseText;
   document.getElementById("results").innerHTML +='<div id="results_'+toString(count_extensions)+'">' + text + '</div>';
    count_extensions += 1;
-    twittr.widgets.load(document.getElementById("results_"+toString(count_extensions)));
+    twttr.widgets.load(document.getElementById("results_"+toString(count_extensions)));
   }
 }
