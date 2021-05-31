@@ -25,7 +25,7 @@ def write_cache(key,item,dir_='oauth_store'):
 
 def date_to_id(date:str):
     return int(
-        datetime.datetime.strptime(date,"%d/%m/%y").timestamp()*2**(64-41)*100
+        (datetime.datetime.strptime(date,"%d/%m/%y").timestamp()+1288834975)*2**22*1000
     )
 
 
