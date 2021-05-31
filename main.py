@@ -66,6 +66,7 @@ def render_index():
                               "from":'',
                               "to":''
                               }
+    session["extension_cursor"] = ''
 
     if session.get('user',None) is None:
         return flask.redirect(url_for('signin'))
@@ -157,12 +158,43 @@ def query():
 
     api = API(auth)
     results = api.favorites(**favorites_params)
+    if len(results) != 0:
+        session["extension_cursor"] = results[-1].id
+    else:
+        session["extension_cursor"] = ''
     results_html = []
     for tweet in results:
         tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
         to_log(tweet_url)
         results_html.append(api.get_oembed(url=tweet_url)["html"])
     with open('/app/templates/results.html','w') as f:
+        for i in results_html:
+            f.write(i)
+            f.write(' ')
+    return flask.render_template('search.html', **session["form_values"])
+
+
+@app.route('/query/extend')
+def query_extend():
+    auth = OAuthHandler(app.config['APP_CONSUMER_KEY'], app.config['APP_CONSUMER_SECRET'])
+    auth.set_access_token(*session['user'])
+
+    user_name = session["form_values"]["user"]
+    favorites_params = {"screen_name": user_name,
+                        "count": 10}
+
+    to = session["extension_cursor"]
+    if to != '':
+        favorites_params["max_id"] = to
+
+    api = API(auth)
+    results = api.favorites(**favorites_params)
+    results_html = []
+    for tweet in results:
+        tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
+        to_log(tweet_url)
+        results_html.append(api.get_oembed(url=tweet_url)["html"])
+    with open('/app/templates/results.html', 'w') as f:
         for i in results_html:
             f.write(i)
             f.write(' ')
