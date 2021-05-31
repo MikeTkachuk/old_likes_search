@@ -159,7 +159,7 @@ def query():
     api = API(auth)
     results = api.favorites(**favorites_params)
     if len(results) != 0:
-        session["extension_cursor"] = results[-1].id
+        session["extension_cursor"] = results[-1].id - 1
     else:
         session["extension_cursor"] = ''
     results_html = []
@@ -190,7 +190,7 @@ def query_extend():
     api = API(auth)
     results = api.favorites(**favorites_params)
     if len(results) != 0:
-        session["extension_cursor"] = results[-1].id
+        session["extension_cursor"] = results[-1].id - 1
     else:
         session["extension_cursor"] = ''
     results_html = []
@@ -201,8 +201,10 @@ def query_extend():
     with open('/app/templates/results.html', 'a') as f:
         for i in results_html:
             f.write(i)
-            f.write(' ')
-    return flask.render_template('search.html', **session["form_values"])
+            f.write('\n')
+    final_html = ''.join(results_html)
+    
+    return final_html
 
 
 if __name__ == '__main__':
