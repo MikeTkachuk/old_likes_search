@@ -189,12 +189,16 @@ def query_extend():
 
     api = API(auth)
     results = api.favorites(**favorites_params)
+    if len(results) != 0:
+        session["extension_cursor"] = results[-1].id
+    else:
+        session["extension_cursor"] = ''
     results_html = []
     for tweet in results:
         tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
         to_log(tweet_url)
         results_html.append(api.get_oembed(url=tweet_url)["html"])
-    with open('/app/templates/results.html', 'w') as f:
+    with open('/app/templates/results.html', 'a') as f:
         for i in results_html:
             f.write(i)
             f.write(' ')
