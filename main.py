@@ -61,13 +61,11 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 def render_index():
     with open('/app/templates/results.html','w') as f:
         f.write('')
-    with open('/app/templates/results.html', 'r') as f:
-        to_log(f"index: results_len = {len(f.readlines())}")
 
     if session.get('user',None) is None:
         return flask.redirect(url_for('signin'))
     else:
-        return flask.render_template('search.html',results='results.html')
+        return flask.render_template('search.html')
 
 
 @app.route('/signin')
@@ -153,9 +151,7 @@ def query():
             to_log(f"query: tweet# = {len(i)}")
             f.write(i)
             f.write(' ')
-    with open('/app/templates/results.html', 'r') as f:
-        to_log(f"query: results_len = {len(f.readlines())}")
-    return flask.render_template('results.html')
+    return flask.render_template('search.html')
 
 
 if __name__ == '__main__':
