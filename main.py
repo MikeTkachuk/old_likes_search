@@ -199,7 +199,7 @@ def query_extend():
         tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
         to_log(tweet_url)
         results_html.append(api.get_oembed(url=tweet_url,omit_script=True)["html"])
-    with open('/app/templates/results.html', 'w') as f:
+    with open('/app/templates/results.html', 'a') as f:
         for i in results_html:
             f.write(i)
             f.write('\n')
