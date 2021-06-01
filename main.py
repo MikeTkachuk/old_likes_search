@@ -216,7 +216,7 @@ def query_extend():
 def get_tweet_html():
     link = request.args.get("url")
     to_log(link)
-    return requests.get(link).json
+    return requests.get(link).json()
 
 
 if __name__ == '__main__':
