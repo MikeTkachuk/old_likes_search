@@ -23,9 +23,9 @@ async function render_extended(tweets){
     re.onload = async () => {
       let red = JSON.parse(re.responseText)["html"];
     document.getElementById("results").innerHTML += 
-    '<div id="results_${count_extensions}">${red}</div>';
-     await twttr.widgets.load(document.getElementById("results_${count_extensions}"));
-     count_extension++;
+    '<div id="results_'+count_extensions.toString()+'">'+red+'</div>';
+     await twttr.widgets.load(document.getElementById("results_"+count_extensions.toString()));
+     count_extensions++;
     }
   }
 }
