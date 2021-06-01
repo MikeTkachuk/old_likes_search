@@ -16,7 +16,7 @@ async function render_extended(tweets){
     url.searchParams.append("url",tweets[i]);
     url.searchParams.append("omit_script","true");
     url = url.href;
-    let re_url = new URL("/get_tweet_html")
+    let re_url = new URL("https://old-likes-search.herokuapp.com/get_tweet_html")
     re_url.searchParams.append("url",url);
     re.open('get',re_url.href);
     re.send();

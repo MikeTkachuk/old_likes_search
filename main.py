@@ -215,6 +215,7 @@ def query_extend():
 @app.route('/get_tweet_html')
 def get_tweet_html():
     link = request.args.get("url")
+    to_log(link)
     return requests.get(link).json
 
 
