@@ -3,6 +3,7 @@ import os
 import flask
 from flask import Flask, render_template, request, url_for, session,jsonify
 from flask_session import Session
+from flask_cors import CORS
 import oauth2 as oauth
 import urllib
 import redis
@@ -43,6 +44,7 @@ except ValueError:
     r = redis.Redis()
 app.config['SESSION_REDIS'] = r
 Session(app)
+CORS(app)
 
 request_token_url = 'https://api.twitter.com/oauth/request_token'
 access_token_url = 'https://api.twitter.com/oauth/access_token'
