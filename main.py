@@ -151,7 +151,7 @@ def query():
                               }
 
     favorites_params = {"screen_name":user_name,
-                        "count":10}
+                        "count":20}
     if from_ != '':
         favorites_params["since"] = date_to_id(from_)
     if to != '':
@@ -182,7 +182,7 @@ def query_extend():
 
     user_name = session["form_values"]["user"]
     favorites_params = {"screen_name": user_name,
-                        "count": 10}
+                        "count": 20}
 
     to = session["extension_cursor"]
     if to != '':
@@ -199,7 +199,7 @@ def query_extend():
         tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
         to_log(tweet_url)
         results_html.append(api.get_oembed(url=tweet_url,omit_script=True)["html"])
-    with open('/app/templates/results.html', 'a') as f:
+    with open('/app/templates/results.html', 'w') as f:
         for i in results_html:
             f.write(i)
             f.write('\n')
