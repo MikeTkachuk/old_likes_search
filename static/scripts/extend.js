@@ -16,8 +16,14 @@ async function render_extended(tweets){
     url.searchParams.append("url",tweets[i]);
     url.searchParams.append("omit_script","true");
     url = url.href;
-    let re_url = new URL("https://old-likes-search.herokuapp.com/get_tweet_html")
-    re_url.searchParams.append("url",url);
+    await sub_request_handler(url);
+    count_extensions++;
+  }
+}
+
+async function sub_request_handler(link){
+  let re_url = new URL("https://old-likes-search.herokuapp.com/get_tweet_html");
+    re_url.searchParams.append("url",link);
     re.open('get',re_url.href);
     re.send();
     re.onload = async () => {
@@ -25,7 +31,5 @@ async function render_extended(tweets){
     document.getElementById("results").innerHTML += 
     '<div id="results_'+count_extensions.toString()+'">'+red+'</div>';
      await twttr.widgets.load(document.getElementById("results_"+count_extensions.toString()));
-     count_extensions++;
     }
-  }
 }
