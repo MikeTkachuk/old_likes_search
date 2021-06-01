@@ -45,6 +45,8 @@ except ValueError:
 app.config['SESSION_REDIS'] = r
 Session(app)
 CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 request_token_url = 'https://api.twitter.com/oauth/request_token'
 access_token_url = 'https://api.twitter.com/oauth/access_token'
