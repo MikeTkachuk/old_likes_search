@@ -3,7 +3,7 @@ import os
 import flask
 from flask import Flask, render_template, request, url_for, session,jsonify
 from flask_session import Session
-from flask_cors import CORS
+from flask_cors import CORS,cross_origin
 import oauth2 as oauth
 import urllib
 import redis
@@ -32,6 +32,8 @@ def date_to_id(date:str):
 
 
 app = flask.Flask(__name__)
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 app.secret_key = "gs67hduyhw9nn7u"
 app.config.from_object(__name__)
@@ -44,8 +46,6 @@ except ValueError:
     r = redis.Redis()
 app.config['SESSION_REDIS'] = r
 Session(app)
-CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 request_token_url = 'https://api.twitter.com/oauth/request_token'
@@ -63,6 +63,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
 @app.route('/')
+@cross_origin()
 def render_index():
     with open('/app/templates/results.html','w') as f:
         f.write('')
