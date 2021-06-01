@@ -8,6 +8,7 @@ import oauth2 as oauth
 import urllib
 import redis
 import datetime
+import requests
 
 
 import tweepy as tw
@@ -210,6 +211,11 @@ def query_extend():
             f.write('\n')
 
     return jsonify(results_html)
+
+@app.route('/get_tweet_html')
+def get_tweet_html():
+    link = request.args.get("url")
+    return requests.get(link).json
 
 
 if __name__ == '__main__':

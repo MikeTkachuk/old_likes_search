@@ -12,11 +12,13 @@ function handle_extend(){
 async function render_extended(tweets){
   for (let i=0;i<tweets.length;i++){
     let re  = new XMLHttpRequest();
-    re.setRequestHeader('Access-Control-Allow-Origin','*');
     let url = new URL('https://publish.twitter.com/oembed');
     url.searchParams.append("url",tweets[i]);
     url.searchParams.append("omit_script","true");
-    re.open('get',url.href);
+    url = url.href;
+    let re_url = new URL("/get_tweet_html")
+    re_url.searchParams.append("url",url);
+    re.open('get',re_url.href);
     re.send();
     re.onload = async () => {
       let red = JSON.parse(re.responseText)["html"];
