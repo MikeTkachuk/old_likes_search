@@ -12,6 +12,7 @@ function handle_extend(){
 async function render_extended(tweets){
   for (let i=0;i<tweets.length;i++){
     let re  = new XMLHttpRequest();
+    re.setRequestHeader('Access-Control-Allow-Origin','*');
     let url = new URL('https://publish.twitter.com/oembed');
     url.searchParams.append("url",tweets[i]);
     url.searchParams.append("omit_script","true");
