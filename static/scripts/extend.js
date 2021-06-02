@@ -2,15 +2,8 @@ count_extensions = 0;
 async function set_html(link){
   let re_url = new URL("https://old-likes-search.herokuapp.com/get_tweet_html");
     re_url.searchParams.append("url",link);
-    let re_html  = new XMLHttpRequest();
-    re_html.open('get',re_url.href);
-    var out = '';
-    re_html.onload = () => {
-      let red = JSON.parse(re_html.responseText)["html"];
-      out = red;
-    }
-    await re_html.send();
-    return out;
+    out = await fetch(re_url.href,{method:"GET"});
+    return out.json()["html"];
 }
 function handle_extend(){
   let re_links = new XMLHttpRequest();
