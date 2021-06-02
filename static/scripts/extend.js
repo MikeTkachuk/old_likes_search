@@ -1,46 +1,24 @@
 count_extensions = 0;
-function handle_extend(){
-  let re_links = new XMLHttpRequest();
-  re_links.open('get', '/query/extend');
-  re_links.send();
-  re_links.onload = () => {
-  var red = JSON.parse(re_links.responseText);
-  render_extended(red);
-  }
-} 
-
-async function render_extended(tweets){
-  for (let i=0;i<tweets.length;i++){
-    let url = new URL('https://publish.twitter.com/oembed');
-    url.searchParams.append("url",tweets[i]);
-    url.searchParams.append("omit_script","true");
-    url = url.href;
-    sub_request_handler(url,count_extensions);
-    count_extensions++;
-  }
- await twttr.widgets.load(document.getElementById('results'));
- 
-}
-
-function sub_request_handler(link,order){
+async function set_html(link){
   let re_url = new URL("https://old-likes-search.herokuapp.com/get_tweet_html");
     re_url.searchParams.append("url",link);
     let re_html  = new XMLHttpRequest();
     re_html.open('get',re_url.href);
-    re_html.send();
+    var out = '';
     re_html.onload = () => {
       let red = JSON.parse(re_html.responseText)["html"];
-      set_div(order,red);
+      out = red;
     }
+    await re_html.send();
+    return out;
 }
-
-function set_div(order,content){
-document.getElementById("results").innerHTML += content;
-    console.log("added div with id 'results_'"+order.toString());
-      
-}
-
-async function render_tweet(order){
- await twttr.widgets.load(document.getElementById("results_"+order.toString()));  
- console.log("loaded tweet "+order.toString());
+function handle_extend(){
+  let re_links = new XMLHttpRequest();
+  re_links.open('get', '/query/extend');
+  re_links.send();
+  re_links.onload = async() => {
+    document.getElementById('results').innerHTML += await set_html('https://twitter.com/RussianMemesLtd/status/1400026144779517964');
+    document.getElementById("results").innerHTML += '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Tomday you don&#39;t shit <a href="https://t.co/RzPQarCgXe">pic.twitter.com/RzPQarCgXe</a></p>&mdash; Russian Memes United (@RussianMemesLtd) <a href="https://twitter.com/RussianMemesLtd/status/1400026144779517964?ref_src=twsrc%5Etfw">June 2, 2021</a></blockquote>';
+  twttr.widgets.load(document.getElementById("results"));
+  }
 } 
