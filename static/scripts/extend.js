@@ -7,7 +7,7 @@ function handle_extend(){
   var red = JSON.parse(re_links.responseText);
   render_extended(red);
   }
-}
+} 
 
 async function render_extended(tweets){
   for (let i=0;i<tweets.length;i++){
@@ -15,7 +15,7 @@ async function render_extended(tweets){
     url.searchParams.append("url",tweets[i]);
     url.searchParams.append("omit_script","true");
     url = url.href;
-    console.log( await sub_request_handler(url,count_extensions));
+    await sub_request_handler(url,count_extensions);
     count_extensions++;
   }
 }
@@ -36,11 +36,11 @@ async function sub_request_handler(link,order){
 function set_div(order,content){
 document.getElementById("results").innerHTML += 
     '<div id="results_'+order.toString()+'">'+content+'</div>';
-    console.log("added div with id 'results_${order}'");
+    console.log("added div with id 'results_'"+order.toString());
       
 }
 
 async function render_tweet(order){
  await twttr.widgets.load(document.getElementById("results_"+order.toString()));  
- console.log("loaded tweet ${order}");
+ console.log("loaded tweet "+order.toString());
 }
