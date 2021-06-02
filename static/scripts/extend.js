@@ -43,4 +43,4 @@ document.getElementById("results").innerHTML +=
 async function render_tweet(order){
  await twttr.widgets.load(document.getElementById("results_"+order.toString()));  
  console.log("loaded tweet "+order.toString());
-}
+} 
