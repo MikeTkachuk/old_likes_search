@@ -66,8 +66,6 @@ app.config['TEMPLATES_AUTO_RELOAD'] = False
 @app.route('/')
 @cross_origin()
 def render_index():
-    with open('/app/templates/results.html','w') as f:
-        f.write('')
 
     session["form_values"] = {"user":'',
                               "from":'',
@@ -78,7 +76,7 @@ def render_index():
     if session.get('user',None) is None:
         return flask.redirect(url_for('signin'))
     else:
-        return flask.render_template('search.html',**session["form_values"])
+        return flask.render_template('search.html', ids=[],**session["form_values"])
 
 
 @app.route('/signin')
@@ -169,16 +167,10 @@ def query():
         session["extension_cursor"] = results[-1].id - 1
     else:
         session["extension_cursor"] = ''
-    results_html = []
+    results_ids = []
     for tweet in results:
-        tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
-        to_log(tweet_url)
-        results_html.append(tweet_url)
-    with open('/app/templates/results.html','w') as f:
-        for i in results_html:
-            f.write(i)
-            f.write(' ')
-    return flask.render_template('search.html', **session["form_values"])
+        results_ids.append(str(tweet.id))
+    return flask.render_template('search.html', ids=results_ids,**session["form_values"])
 
 
 @app.route('/query/extend')
@@ -200,17 +192,12 @@ def query_extend():
         session["extension_cursor"] = results[-1].id - 1
     else:
         session["extension_cursor"] = ''
-    results_html = []
+    results_ids = []
     for tweet in results:
-        tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
-        to_log(tweet_url)
-        results_html.append(str(tweet.id))
-    with open('/app/templates/results.html', 'a') as f:
-        for i in results_html:
-            f.write(i)
-            f.write('\n')
+        results_ids.append(str(tweet.id))
 
-    return jsonify(results_html)
+    return flask.render_template('search.html', ids=results_ids,**session["form_values"])
+
 
 @app.route('/get_tweet_html')
 def get_tweet_html():

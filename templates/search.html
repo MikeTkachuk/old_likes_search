@@ -6,7 +6,10 @@
     <script src={{url_for('static',filename="/scripts/extend.js")}}>
     </script>
     
-    <script>window.twttr = (function(d, s, id) {
+    <script>
+      window.onload = handle_extension;
+      
+      window.twttr = (function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0],
     t = window.twttr || {};
   if (d.getElementById(id)) return t;
@@ -43,11 +46,10 @@
   <a href='/signout' style='float:left;margin-left:25px;'>Switch account</a>
   <a href='/' style='float:left;margin-left:25px;'>Reset</a> <br><br>
   <div id="results">
-    {% include "results.html" without context %}
   </div>
   
   <br>
-  <a onclick="handle_extend();">Extend</a>
+  <a onclick="/query/extend">Extend</a>
   <br><br>
 </body>
 </html>
