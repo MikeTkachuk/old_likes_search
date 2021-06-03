@@ -204,7 +204,7 @@ def query_extend():
     for tweet in results:
         tweet_url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
         to_log(tweet_url)
-        results_html.append(tweet_url)
+        results_html.append(str(tweet.id))
     with open('/app/templates/results.html', 'a') as f:
         for i in results_html:
             f.write(i)
