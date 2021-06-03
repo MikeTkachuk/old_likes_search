@@ -9,7 +9,7 @@ import urllib
 import redis
 import datetime
 import requests
-
+import json
 
 import tweepy as tw
 from tweepy.auth import OAuthHandler
@@ -76,7 +76,7 @@ def render_index():
     if session.get('user',None) is None:
         return flask.redirect(url_for('signin'))
     else:
-        return flask.render_template('search.html', ids=jsonify([]),**session["form_values"])
+        return flask.render_template('search.html', ids=json.dumps([]),**session["form_values"])
 
 
 @app.route('/signin')
@@ -170,7 +170,7 @@ def query():
     results_ids = []
     for tweet in results:
         results_ids.append(str(tweet.id))
-    return flask.render_template('search.html', ids=jsonify(results_ids),**session["form_values"])
+    return flask.render_template('search.html', ids=json.dumps(results_ids),**session["form_values"])
 
 
 @app.route('/query/extend')
@@ -196,7 +196,7 @@ def query_extend():
     for tweet in results:
         results_ids.append(str(tweet.id))
 
-    return flask.render_template('search.html', ids=jsonify(results_ids),**session["form_values"])
+    return flask.render_template('search.html', ids=json.dumps(results_ids),**session["form_values"])
 
 
 @app.route('/get_tweet_html')
