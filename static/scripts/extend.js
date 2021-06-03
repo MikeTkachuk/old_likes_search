@@ -22,11 +22,11 @@ function handle_extend(){
   re_links.send();
   re_links.onload = async() => {
     let links = JSON.parse(re_links.responseText);
-    await get_html(links[0],0);
-    await get_html(links[1],1);
-    /*for(i=1;i<links.length;i++){
+    /*await get_html(links[0],0);
+    await get_html(links[1],1);*/
+    for(i=1;i<links.length;i++){
       await get_html(links[i],count_extensions);
       count_extensions++;
-    }*/
+    }
   }
 } 
