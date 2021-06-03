@@ -7,7 +7,7 @@ async function render_tweets(id,order){
 function handle_extend(){
       
     for(i=1;i<ids.length;i++){
-      render_tweets(ids[i],count_extensions);
+      render_tweets(ids[i.toString()],count_extensions);
       count_extensions++;
     }
 }
