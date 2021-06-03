@@ -2,7 +2,7 @@
 count_extensions = 0;
 async function render_tweets(id,order){
       document.getElementById('results').innerHTML += '<div id="result_'+order.toString()+'">'+'</div>';
-      return twttr.createTweet(document.getElementById("result_"+order.toString()));
+      return twttr.createTweet(id,document.getElementById("result_"+order.toString()),{});
 }
 function handle_extend(){
   let re_ids = new XMLHttpRequest();
