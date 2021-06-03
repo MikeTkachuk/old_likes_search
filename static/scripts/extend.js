@@ -1,72 +1,31 @@
-/*count_extensions = 0;
-function handle_extend(){
-  let re_links = new XMLHttpRequest();
-  re_links.open('get', '/query/extend');
-  re_links.send();
-  re_links.onload = () => {
-  var red = JSON.parse(re_links.responseText);
-  render_extended(red);
-  }
-}
-
-async function render_extended(tweets){
-  for (let i=0;i<tweets.length;i++){
-    let url = new URL('https://publish.twitter.com/oembed');
-    url.searchParams.append("url",tweets[i]);
-    url.searchParams.append("omit_script","true");
-    url = url.href;
-    console.log( await sub_request_handler(url,count_extensions));
-    count_extensions++;
-  }
-}
-
-async function sub_request_handler(link,order){
-  let re_url = new URL("https://old-likes-search.herokuapp.com/get_tweet_html");
-    re_url.searchParams.append("url",link);
-    let re_html  = new XMLHttpRequest();
-    re_html.open('get',re_url.href);
-    re_html.send();
-    re_html.onload = async () => {
-      let red = JSON.parse(re_html.responseText)["html"];
-      set_div(order,red);
-     await render_tweet(order);
-    }
-}
-
-function set_div(order,content){
-document.getElementById("results").innerHTML += 
-    '<div id="results_'+order.toString()+'">'+content+'</div>';
-    console.log("added div with id 'results_${order}'");
-      
-}
-
-async function render_tweet(order){
- await twttr.widgets.load(document.getElementById("results_"+order.toString()));  
- console.log("loaded tweet ${order}");
-}
-*/
-
-
-
-
-
-
-
-
 
 count_extensions = 0;
-async function get_html(link){
+async function get_html(link,order){
   let re_url = new URL("https://old-likes-search.herokuapp.com/get_tweet_html");
-    re_url.searchParams.append("url",link);
-    out = fetch(re_url.href,{method:"GET"});
-    return out.json();
+  let param_url = new URL("https://publish.twitter.com/oembed");
+  param_url.searchParams.append('url',link);
+  param_url.searchParams.append('omit_script','true');
+  re_url.searchParams.append("url",param_url.href);
+  console.log(re_url.href);
+  out = await fetch(re_url.href,{method:"GET"});
+  return out.json().then(
+    res=>{
+      document.getElementById('results').innerHTML += '<div id="result_'+order.toString()+'">'+
+       res['html']+ '</div>';
+      twttr.widgets.load(document.getElementById("result_"+order.toString()));
+
+    }
+    );
 }
 function handle_extend(){
   let re_links = new XMLHttpRequest();
   re_links.open('get', '/query/extend');
   re_links.send();
   re_links.onload = async() => {
-    document.getElementById('results').innerHTML += (await get_html('https://publish.twitter.com/oembed?url=https%3A%2F%2Ftwitter.com%2FRussianMemesLtd%2Fstatus%2F1400026144779517964'))['html'];
-  twttr.widgets.load(document.getElementById("results"));
+    let links = JSON.parse(re_links.responseText);
+    for(i=0;i<links.length;i++){
+      await get_html(links[i],count_extensions);
+      count_extensions++;
+    }
   }
 } 
