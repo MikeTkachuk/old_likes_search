@@ -2,7 +2,7 @@
 count_extensions = 0;
 async function render_tweets(id,order){
       document.getElementById('results').innerHTML += '<div id="result_'+order.toString()+'">'+'</div>';
-      return twttr.createTweet(id,document.getElementById("result_"+order.toString()),{});
+      return twttr.ready((twttr)=>{twttr.widgets.createTweet(id,document.getElementById("result_"+order.toString()),{});});
 }
 function handle_extend(){
   let re_ids = new XMLHttpRequest();
@@ -12,7 +12,7 @@ function handle_extend(){
     let ids = JSON.parse(re_ids.responseText);
     
     for(i=1;i<ids.length;i++){
-      await render_tweets(ids[i],count_extensions);
+      render_tweets(ids[i],count_extensions);
       count_extensions++;
     }
   }
