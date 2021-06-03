@@ -76,7 +76,7 @@ def render_index():
     if session.get('user',None) is None:
         return flask.redirect(url_for('signin'))
     else:
-        return flask.render_template('search.html', ids=json.dumps({}),**session["form_values"])
+        return flask.render_template('search.html', ids=json.dumps([]),**session["form_values"])
 
 
 @app.route('/signin')
@@ -171,7 +171,7 @@ def query():
     for tweet in results:
         results_ids.append(str(tweet.id))
     return flask.render_template('search.html',
-                                 ids=json.dumps(dict(zip(range(len(results_ids)),results_ids))),
+                                 ids=json.dumps(results_ids),
                                  **session["form_values"])
 
 
@@ -199,7 +199,7 @@ def query_extend():
         results_ids.append(str(tweet.id))
     to_log(json.dumps(dict(zip(range(len(results_ids)),results_ids))))
     return flask.render_template('search.html',
-                                 ids=json.dumps(dict(zip(range(len(results_ids)),results_ids))),
+                                 ids=json.dumps(results_ids),
                                  **session["form_values"])
 
 
