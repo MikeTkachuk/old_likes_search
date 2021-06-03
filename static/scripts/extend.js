@@ -5,12 +5,10 @@ async function render_tweets(id,order){
       return twttr.ready((twttr)=>{twttr.widgets.createTweet(id,document.getElementById("result_"+order.toString()),{});});
 }
 function handle_extend(){
-  
-    let ids = {{ids}};
-    
+      
     for(i=1;i<ids.length;i++){
       render_tweets(ids[i],count_extensions);
       count_extensions++;
     }
-  }
+}
  
