@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    
+    <script>
+    
+      var ids = JSON.parse('{{ids|safe}}');
+      
+    </script>
+    
+    
+  <script src={{url_for('static',filename="/scripts/main.js")}}>
+    </script>
+    <script src={{url_for('static',filename="/scripts/extend.js")}}>
+    </script>
+    
+    
+    <script>
+      window.onload = handle_extend;
+      
+      window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));</script>
+    
+    <style href="/static/css/form.css"></style>
+  </head>
+<body>
+  <form action="/query" method='get'>
+    <text>User:</text>
+    <input name='user' type='text' value={{user}}>
+    <br>
+    
+    <text>Num</text>
+    <input name='num' type='text' value={{from}}>
+    <br>
+    
+    <input type='submit'>
+  </form>
+  <a href='/signout' style='float:left;margin-left:25px;'>Switch account</a>
+  <a href='/' style='float:left;margin-left:25px;'>Reset</a> <br><br>
+  <div id="results">
+  </div>
+  
+  <br>
+  <br><br>
+</body>
+</html>
