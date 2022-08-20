@@ -4,6 +4,7 @@ A script to download the users likes data locally
 
 import sys
 import os
+import shutil
 import flask
 from flask import Flask, render_template, request, url_for, session, jsonify
 from flask_session import Session
@@ -15,6 +16,7 @@ import requests
 import json
 from tqdm import tqdm
 from multiprocessing import Pool, Process
+import zipfile
 
 import tweepy as tw
 from tweepy.auth import OAuthHandler
@@ -25,8 +27,9 @@ access_token_url = 'https://api.twitter.com/oauth/access_token'
 authorize_url = 'https://api.twitter.com/oauth/authorize'
 show_user_url = 'https://api.twitter.com/1.1/users/show.json'
 
-APP_CONSUMER_KEY = -1
-APP_CONSUMER_SECRET = -1
+APP_CONSUMER_KEY = ""
+APP_CONSUMER_SECRET = ""
+
 
 def to_log(*msg):
     for i in msg:
@@ -140,21 +143,45 @@ def download_likes(*args):
 
     user_name = args[3]
     num = args[4]
+    query_type = args[5]
     to = None
+    api.user_timeline()
+    if query_type == 'like':
+        favorites_params = {"screen_name": user_name,
+                            "count": 200,
+                            'include_entities': True,
+                            }
+        api_method = api.get_favorites
+    elif query_type == 'status':
+        favorites_params = {"screen_name": user_name,
+                            "count": 200,
+                            'include_rts': True,
+                            }
+        api_method = api.user_timeline
+    else:
+        raise NotImplementedError('Tried to use an unsupported query type.')
 
-    favorites_params = {"screen_name": user_name,
-                        "count": 200,
-                        'include_entities': True,
-                        }
+    temp_dir = 'downloads/_temp'
+    if os.path.exists(temp_dir):
+        shutil.rmtree(temp_dir)
+    os.makedirs(temp_dir)
     for i_get in tqdm(range(int(num) // favorites_params['count'] + 1)):
         if to is not None:
             favorites_params["max_id"] = to
 
-        results = api.favorites(**favorites_params, tweet_mode='extended')
+        results = api_method(**favorites_params, tweet_mode='extended')
         for status in results:
-            with open(f'downloads/{status.id}.json', 'w') as f:
+            with open(os.path.join(temp_dir, f'{status.id}.json'), 'w') as f:
                 json.dump(status._json, f)
         to = results[-1].id
+
+    today_str = datetime.datetime.today().strftime('%d-%b-%Y')
+    archive_name = f'{user_name}_{"tweets" if query_type=="status" else "likes"}_{today_str}.zip'
+    with zipfile.ZipFile('downloads/' + archive_name, 'w') as arc:
+        for f in next(os.walk(temp_dir))[-1]:
+            filepath = os.path.join(temp_dir, f)
+            arc.write(filepath, arcname=f)
+    shutil.rmtree(temp_dir)
 
 
 @app.route('/query')
@@ -164,6 +191,7 @@ def query():
                    session['user'],
                    request.args.get('user', ''),
                    request.args.get('num', ''),
+                   request.args.get('query_type', 0)
                    )
     return flask.render_template('download_data.html',
                                  ids='{}',

@@ -46,7 +46,15 @@
     <text>Num</text>
     <input name='num' type='text' value={{from}}>
     <br>
-    
+    <div>
+      <input type="radio" id="query_likes" name="query_type" value="like"
+             checked>
+      <label for="query_likes">Likes</label>
+    </div>
+    <div>
+      <input type="radio" id="query_statuses" name="query_type" value="status">
+      <label for="query_statuses">Tweets</label>
+    </div>
     <input type='submit'>
   </form>
   <a href='/signout' style='float:left;margin-left:25px;'>Switch account</a>
