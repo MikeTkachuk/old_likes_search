@@ -49,16 +49,54 @@ def upload_tweet(tweet_meta):
         return False
 
     for i, media in enumerate(tweet_meta['media_urls']):
+        content_type = 'video/mp4' if media[0].endswith('mp4') else 'image/'+media[0].split('.')[-1]
+        content_type = {'ContentType': content_type}
         media_request = requests.get(media[0], stream=True)
         client.upload_fileobj(media_request.raw,
                               BUCKET_NAME,
-                              tweet_path + str(i) + '.' + media[0].split('.')[-1])
+                              tweet_path + str(i) + '.' + media[0].split('.')[-1],
+                              ExtraArgs=content_type)
 
     client.upload_fileobj(io.BytesIO(json.dumps(tweet_meta).encode('utf-8')),
                           BUCKET_NAME,
-                          tweet_path + 'info.json')
+                          tweet_path + 'info.json',
+                          ExtraArgs={'ContentType': 'application/json'})
 
     return True
+
+
+def update_index_html(client):
+    backup_pag = client.get_paginator("list_objects_v2")
+    backup_resp = backup_pag.paginate(Bucket=BUCKET_NAME, Prefix="backups/", PaginationConfig={"PageSize": 1000})
+    backups = []
+    for p in backup_resp:
+        backups.extend([x['Key'] for x in p['Contents'] if x['Key'].endswith('.html')])
+
+    html_start = """<!DOCTYPE html>
+<html>
+<head>
+    <script src="main.js" charset="utf-8">
+    </script>
+</head>
+
+<body>
+<div style=\"background-color: #e8e8e8\" id="menu"><ol>"""
+    html_end = """
+
+</ol></div>
+<div style=\"background-color:#909090; height: 2vh\"></div>
+<div id="tweets_div"></div>
+</body>
+</html>"""
+    for b in backups:
+        html_start += f"<li><a onclick=\"pick_backup('{b.split('/')[-1]}');\">{b.split('/')[-1]}</a></li>\n"
+
+    html = html_start + html_end
+    s3.upload_fileobj(io.BytesIO(html.encode('utf-16')),
+                      BUCKET_NAME,
+                      f"index.html",
+                      ExtraArgs={'ContentType': 'text/html'}
+                      )
 
 
 def backup_arc(client, arc_path):
@@ -75,7 +113,10 @@ def backup_arc(client, arc_path):
     html = create_html(parsed, aws_mode=True)
     client.upload_fileobj(io.BytesIO(html.encode('utf-16')),
                           BUCKET_NAME,
-                          f"backups/{os.path.split(arc_path)[-1].split('.')[0]}.html")
+                          f"backups/{os.path.split(arc_path)[-1].split('.')[0]}.html",
+                          ExtraArgs={'ContentType': 'text/html'})
+    update_index_html(client)
+    print(html)
     return success_list
 
 

@@ -13,6 +13,9 @@ def arc_to_dict(arc_path):
 
 
 def extract_info(tweet_json):
+    # in case retweeted reference the original tweet
+    if 'retweeted_status' in tweet_json:
+        tweet_json = tweet_json['retweeted_status']
     info = {
         'id': tweet_json['id_str'],
         'text': tweet_json["full_text"],
@@ -44,11 +47,11 @@ def create_html(metadata, aws_mode=False):
         for i, media in enumerate(tweet_meta['media_urls']):
             media_url = media[0] if not aws_mode else f"tweets/{tweet_meta['id']}/{i}.{media[0].split('.')[-1]}"
             if media[1] == 'video':
-                tweet_media_html += f"<iframe class=\"vid\" src={media[0]} loading=\"lazy\"></iframe>"
+                tweet_media_html += f"<iframe class=\"vid\" src={media_url} loading=\"lazy\"></iframe>"
             elif media[1] == 'photo':
-                tweet_media_html += f"<img class=\"image\" src={media[0]} loading=\"lazy\"/>"
+                tweet_media_html += f"<img class=\"image\" src={media_url} loading=\"lazy\"/>"
             else:
-                tweet_media_html += f"<video autoplay loop muted inline class=\"gif\" src={media[0]} loading=\"lazy\"/>"
+                tweet_media_html += f"<video autoplay loop muted inline class=\"gif\" src={media_url} loading=\"lazy\"/>"
 
         return tweet_html.format(
             tweet_id=tweet_meta['id'],
