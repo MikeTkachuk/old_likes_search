@@ -1,5 +1,7 @@
 import zipfile
 import json
+import requests
+from tqdm import tqdm
 
 
 def arc_to_dict(arc_path):
@@ -32,14 +34,15 @@ def extract_info(tweet_json):
     return info
 
 
-def create_html(metadata):
+def create_html(metadata, aws_mode=False):
     def _tweet_block(tweet_meta):
         tweet_html = "<div id=\"{tweet_id}\" class=\"tweet\"><div>{tweet_text} {tweet_link}</div> {tweet_media}</div> <hr>"
 
         tweet_text_html = f"<text>{tweet_meta['text']}</text>"
         tweet_link_html = f"<a href=\"{tweet_meta['link']}\">[link]</a>"
         tweet_media_html = ''
-        for media in tweet_meta['media_urls']:
+        for i, media in enumerate(tweet_meta['media_urls']):
+            media_url = media[0] if not aws_mode else f"tweets/{tweet_meta['id']}/{i}.{media[0].split('.')[-1]}"
             if media[1] == 'video':
                 tweet_media_html += f"<iframe class=\"vid\" src={media[0]} loading=\"lazy\"></iframe>"
             elif media[1] == 'photo':
@@ -82,6 +85,16 @@ def create_html(metadata):
         head=head,
         body=body
     )
+
+
+def _get_file_size(url):
+    url_head = requests.head(url)
+    try:
+        s = int(url_head.headers['content-length'])
+    except KeyError:
+        print(url)
+        s = 0
+    return s
 
 
 if __name__ == '__main__':

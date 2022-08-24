@@ -7,3 +7,5 @@ oauth2
 gunicorn
 redis
 tqdm
+boto3
+requests
