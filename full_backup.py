@@ -75,12 +75,20 @@ def update_index_html(client):
     html_start = """<!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="styles.css" charset="utf-8">
     <script src="main.js" charset="utf-8">
     </script>
 </head>
 
 <body>
-<div style=\"background-color: #e8e8e8\" id="menu"><ol>"""
+<div id="controls">
+        <button id="shuffle" onclick="shuffleTweets();">Shuffle</button>
+        <button id="top" onclick="topFunction();">Top</button>
+        <button id="video_pause" onclick="pauseAll();">Pause all</button>
+        <input type="number" id="navigate_param" min="0" max="100" step="5">
+        <button id="navigate" onclick="scrollTo();">Go</button>
+</div>
+<div id="menu"><ol>"""
     html_end = """
 
 </ol></div>
@@ -116,7 +124,6 @@ def backup_arc(client, arc_path):
                           f"backups/{os.path.split(arc_path)[-1].split('.')[0]}.html",
                           ExtraArgs={'ContentType': 'text/html'})
     update_index_html(client)
-    print(html)
     return success_list
 
 
