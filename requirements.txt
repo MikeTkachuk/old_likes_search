@@ -1,7 +1,11 @@
-tweepy
+tweepy==4.10.0
 flask
 flask-session
+flask_cors
 numpy
 oauth2
 gunicorn
 redis
+tqdm
+boto3
+requests

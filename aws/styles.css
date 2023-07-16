@@ -1,0 +1,55 @@
+#menu li {
+    border: none;
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin-bottom:5px;
+    width:auto;
+    display:table;
+    box-shadow: 0 3px #858e8e;
+    background-color: #dad2d2
+}
+
+#menu li:active {
+    background-color: #9da19e;
+    box-shadow: 0 1px #666;
+    transform: translateY(2px);
+}
+
+
+#menu {
+    background-color: #f0eeee;
+    font-size: 3.5vw;
+}
+
+#controls{
+    position: fixed;
+    right: 0;
+    top: 1vh;
+    max-width: 35vw;
+}
+
+#controls button{
+    font-size: 3vw;
+}
+#controls input{
+    font-size: 3vw;
+}
+
+
+.tweet{
+}
+.image {
+    width: 90vw;
+    object-fit: contain;
+    margin-bottom: 3vh;
+}
+.vid {
+    height: 90vh;
+    width: 90vw;
+    object-fit: contain;
+}
+.gif {
+    height: 90vh;
+    width: 90vw;
+    object-fit: contain;
+}
