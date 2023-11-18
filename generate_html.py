@@ -27,7 +27,7 @@ def extract_info(tweet_json):
     if "media" in extended:
         for x in extended["media"]:
             if x["type"] == "photo":
-                url = x["media_url"]
+                url = x.get("media_url", x['media_url_https'])
                 info['media_urls'].append((url, x['type']))
             elif x["type"] in ["video", "animated_gif"]:
                 variants = x["video_info"]["variants"]
