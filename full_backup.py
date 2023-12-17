@@ -61,10 +61,14 @@ def upload_tweet(tweet_meta):
         content_type = 'video/mp4' if media[0].endswith('mp4') else 'image/' + media[0].split('.')[-1]
         content_type = {'ContentType': content_type}
         media_request = requests.get(media[0], stream=True)
-        client.upload_fileobj(media_request.raw,
-                              BUCKET_NAME,
-                              tweet_path + str(i) + '.' + media[0].split('.')[-1],
-                              ExtraArgs=content_type)
+        if media_request.headers["Content-Length"]:
+            client.upload_fileobj(media_request.raw,
+                                  BUCKET_NAME,
+                                  tweet_path + str(i) + '.' + media[0].split('.')[-1],
+                                  ExtraArgs=content_type)
+        else:
+            print(f"Invalid response from {media[0]} in {tweet_meta['id']}")
+            return False
 
     client.upload_fileobj(io.BytesIO(json.dumps(tweet_meta).encode('utf-8')),
                           BUCKET_NAME,
