@@ -40,6 +40,18 @@ def _create_path(client, path_):
     client.put_object(Bucket=BUCKET_NAME, Key=path_)
 
 
+def _delete_recursive(client, prefix):
+    keys = client.list_objects_v2(Bucket=BUCKET_NAME,
+                                  Prefix=prefix)
+    if keys['KeyCount'] > 5:
+        raise RuntimeError("Attempted to delete >5 files")
+    client.delete_objects(Bucket=BUCKET_NAME,
+                          Delete={
+                              'Objects': [{"Key": obj["Key"]} for obj in keys["Contents"]],
+                          },
+                          )
+
+
 def create_bucket_structure(client):
     if not _path_exists(client, "tweets"):
         _create_path(client, "tweets")
@@ -60,13 +72,16 @@ def upload_tweet(tweet_meta):
     for i, media in enumerate(tweet_meta['media_urls']):
         content_type = 'video/mp4' if media[0].endswith('mp4') else 'image/' + media[0].split('.')[-1]
         content_type = {'ContentType': content_type}
+        media_key = tweet_path + str(i) + '.' + media[0].split('.')[-1]
         media_request = requests.get(media[0], stream=True)
-        if media_request.headers["Content-Length"]:
-            client.upload_fileobj(media_request.raw,
-                                  BUCKET_NAME,
-                                  tweet_path + str(i) + '.' + media[0].split('.')[-1],
-                                  ExtraArgs=content_type)
-        else:
+        client.upload_fileobj(media_request.raw,
+                              BUCKET_NAME,
+                              media_key,
+                              ExtraArgs=content_type)
+        uploaded_size = client.head_object(Bucket=BUCKET_NAME,
+                                           Key=media_key)["ContentLength"]
+        if not uploaded_size:
+            _delete_recursive(client, tweet_path)
             print(f"Invalid response from {media[0]} in {tweet_meta['id']}")
             return False
 
@@ -192,6 +207,8 @@ def interactive_response_upload():
 
             except Exception as e:
                 print("Encountered exception while processing the last entry: ", e)
+                import traceback
+                traceback.print_exc()
 
 
 # TODO cache list_objects_v2 requests on storage
