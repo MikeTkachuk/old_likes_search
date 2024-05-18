@@ -18,6 +18,8 @@ def extract_info(tweet_json):
         tweet_json = tweet_json['retweeted_status']
     info = {
         'id': tweet_json['id_str'],
+        'user_name': tweet_json.get('user_name'),
+        'user_id': tweet_json.get('user_id'),
         'text': tweet_json["full_text"],
         'link': f"https://twitter.com/empty/status/{tweet_json['id_str']}",
         'media_urls': [],

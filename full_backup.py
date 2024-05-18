@@ -164,6 +164,13 @@ def get_tweet_iterator_from_response(response_dict):
                 tweet_dict = result['legacy']
             else:
                 tweet_dict = result['tweet']['legacy']
+            try:  # try get user name
+                user_name = result['core']['user_results']['result']['legacy']['name']
+                user_id = result['core']['user_results']['result']['rest_id']
+                tweet_dict['user_name'] = user_name
+                tweet_dict['user_id'] = user_id
+            except KeyError:
+                pass
             yield tweet_dict
 
 
@@ -184,33 +191,34 @@ def interactive_response_upload():
     print("Archive name: ", archive_name)
     print("Input json response one at a time. Provide empty line to exit")
     with zipfile.ZipFile('downloads/' + archive_name, 'w') as arc:
-        while True:
-            try:
-
-                response = input("Enter response: ")
-                if not response:
-                    break
-                to_upload = []
-                for tweet in get_tweet_iterator_from_response(json.loads(response)):
-                    tweet_file_path = temp_dir / f'{tweet["id_str"]}.json'
-                    with open(tweet_file_path, 'w') as f:
-                        json.dump(tweet, f)
-                    arc.write(tweet_file_path, arcname=tweet_file_path.name)
-                    tweet_file_path.unlink()
-                    to_upload.append(extract_info(tweet))
-                with Pool(cpu_count()) as p:
+        with Pool(cpu_count()-1) as p:
+            while True:
+                try:
+                    response = input("Enter response: ")
+                    if not response:
+                        break
+                    to_upload = []
+                    for tweet in get_tweet_iterator_from_response(json.loads(response)):
+                        tweet_file_path = temp_dir / f'{tweet["id_str"]}.json'
+                        with open(tweet_file_path, 'w') as f:
+                            json.dump(tweet, f)
+                        arc.write(tweet_file_path, arcname=tweet_file_path.name)
+                        tweet_file_path.unlink()
+                        to_upload.append(extract_info(tweet))
                     success_stats = list(tqdm(
                         p.imap(upload_tweet, to_upload), total=len(to_upload)
                     ))
-                success_stats.append(upload_tweet(extract_info(tweet)))
-                print("# tweets provided:", len(success_stats), " # tweets uploaded:", sum(success_stats))
+                    success_stats.append(upload_tweet(extract_info(tweet)))
+                    print("# tweets provided:", len(success_stats), " # tweets uploaded:", sum(success_stats))
 
-            except Exception as e:
-                print("Encountered exception while processing the last entry: ", e)
-                import traceback
-                traceback.print_exc()
+                except Exception as e:
+                    print("Encountered exception while processing the last entry: ", e)
+                    import traceback
+                    traceback.print_exc()
 
 
-# TODO cache list_objects_v2 requests on storage
+
+
+# TODO cache list_objects_v2 requests on storage (questionable)
 if __name__ == "__main__":
     interactive_response_upload()
