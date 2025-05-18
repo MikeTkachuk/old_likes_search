@@ -156,7 +156,7 @@ def backup_arc(client, arc_path):
 
 
 def get_tweet_iterator_from_response(response_dict):
-    entries = response_dict['data']['user']['result']['timeline_v2']['timeline']['instructions'][0]['entries']
+    entries = response_dict['data']['user']['result']['timeline']['timeline']['instructions'][0]['entries']
     for entry in entries:
         if 'itemContent' in entry['content']:
             result = entry['content']['itemContent']['tweet_results']['result']
