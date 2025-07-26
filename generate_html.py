@@ -18,6 +18,8 @@ def extract_info(tweet_json):
         tweet_json = tweet_json['retweeted_status']
     info = {
         'id': tweet_json['id_str'],
+        'user_name': tweet_json.get('user_name'),
+        'user_id': tweet_json.get('user_id'),
         'text': tweet_json["full_text"],
         'link': f"https://twitter.com/empty/status/{tweet_json['id_str']}",
         'media_urls': [],
@@ -27,7 +29,7 @@ def extract_info(tweet_json):
     if "media" in extended:
         for x in extended["media"]:
             if x["type"] == "photo":
-                url = x["media_url"]
+                url = x.get("media_url", x['media_url_https'])
                 info['media_urls'].append((url, x['type']))
             elif x["type"] in ["video", "animated_gif"]:
                 variants = x["video_info"]["variants"]
