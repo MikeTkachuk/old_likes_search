@@ -2,6 +2,7 @@ import os
 import io
 import datetime
 import shutil
+import threading
 import zipfile
 from pathlib import Path
 
@@ -96,7 +97,7 @@ def upload_tweet(tweet_meta):
     return upload_report
 
 
-@warnings.deprecated()
+# @warnings.deprecated()
 def update_index_html(client):
     backup_pag = client.get_paginator("list_objects_v2")
     backup_resp = backup_pag.paginate(Bucket=BUCKET_NAME, Prefix="backups/", PaginationConfig={"PageSize": 1000})
@@ -139,7 +140,7 @@ def update_index_html(client):
                       )
 
 
-@warnings.deprecated()
+# @warnings.deprecated()
 def backup_arc(client, arc_path):
     """
     For uploading archives produced by download_data.download_likes.
@@ -190,7 +191,7 @@ def get_tweet_iterator_from_response(response_dict):
 class ObjListCache:
     def __init__(self, path="tweets_list_cache.txt"):
         self.path = path
-        self.file_content = s3.get_object(BUCKET_NAME, path)['Body'].read().decode('utf-8')
+        self.file_content = s3.get_object(Bucket=BUCKET_NAME, Key=path)['Body'].read().decode('utf-8')
 
     def update(self, value, sync=False):
         self.file_content += value
@@ -204,6 +205,63 @@ class ObjListCache:
             Body=self.file_content,
             ContentType='text/plain'
         )
+
+    def reindex(self, sync=False):
+        paginator = s3.get_paginator('list_objects_v2')
+        # List all objects
+        page_iter = paginator.paginate(Bucket=BUCKET_NAME, Prefix="tweets/")
+        groups = {}  # group_id -> list of filenames
+        for page in page_iter:
+            for obj in page.get('Contents', []):
+                key: str = obj['Key']
+                # skip keys that end with slash prefix placeholder
+                if key.endswith('/'):
+                    continue
+                parts = key.split('/')
+                group, filename = parts[-2], parts[-1]
+                groups.setdefault(group, []).append(filename)
+
+        self.file_content = ""
+        for group in groups:
+            files = sorted(groups[group])
+            line = f"{group} " + " ".join(files)
+            self.file_content += line + "\n"
+
+        if sync:
+            self.sync()
+
+
+class ObjMetadataCache(ObjListCache):
+    def __init__(self, path="tweets_metadata_cache.txt"):
+        super().__init__(path)
+
+    def reindex(self, sync=False):
+        paginator = s3.get_paginator('list_objects_v2')
+        # List all objects
+        page_iter = paginator.paginate(Bucket=BUCKET_NAME, Prefix="tweets/")
+        lock = threading.Lock()
+        threads = []
+        self.file_content = ""
+
+        def read_worker(path):
+            string = s3.get_object(Bucket=BUCKET_NAME, Key=path)['Body'].read().decode('utf-8')
+            with lock:
+                self.file_content += string + "\n"
+
+        for page in page_iter:
+            for obj in page.get('Contents', []):
+                key: str = obj['Key']
+                # skip keys that end with slash prefix placeholder
+                if key.endswith('info.json'):
+                    t = threading.Thread(target=read_worker, args=(key,))
+                    t.start()
+                    threads.append(t)
+        for t in threads:
+            t.join()
+
+        if sync:
+            self.sync()
+
 
 def interactive_response_upload():
     """
@@ -220,6 +278,7 @@ def interactive_response_upload():
     today_str = datetime.datetime.today().strftime('%d-%b-%Y')
     archive_name = f'{today_str}.zip'
     list_cache = ObjListCache()
+    meta_cache = ObjMetadataCache()
     print("Archive name: ", archive_name)
     print("Input json response one at a time. Provide empty line to exit")
 
@@ -242,6 +301,7 @@ def interactive_response_upload():
                         p.imap(upload_tweet, to_upload), total=len(to_upload)
                     ))
                     list_cache.update("\n".join([r for r in upload_reports if r]) + "\n", sync=True)
+                    meta_cache.update("\n".join([json.dumps(t) for t in to_upload]) + "\n", sync=True)
                     # success_stats.append(upload_tweet(extract_info(tweet)))  # todo: debug what this line does, maybe remove
                     print("# tweets provided:", len(upload_reports),
                           " # tweets uploaded:", sum([bool(s) for s in upload_reports]))
@@ -262,7 +322,7 @@ Rework key-points:
 - fetch tweets in batches dynamically (when scroll enough) with JS based on loaded file lists
 - load lists -> parse metadata -> load media -> show tweet
 - support multiple videos
-- add metadata filters and search (OP name, timestamp, sub-string search)
+- add metadata filters and search (OP name, timestamp, sub-string search, content type, file size)
 - upon data upload update object list files
 - vibecode more ui/ux
 """
