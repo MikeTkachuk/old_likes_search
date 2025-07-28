@@ -15,8 +15,8 @@ import warnings
 
 from generate_html import arc_to_dict, extract_info, create_html
 
-BUCKET_NAME = None
-PROFILE_NAME = None
+BUCKET_NAME = "twitter-backup4"
+PROFILE_NAME = "tmg"
 
 session = boto3.session.Session(profile_name=PROFILE_NAME)
 s3 = session.client('s3')
