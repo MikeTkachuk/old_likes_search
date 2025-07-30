@@ -317,14 +317,16 @@ def interactive_response_upload():
 # TODO cache list_objects_v2 requests on storage
 """
 Rework key-points:
-- sort latest likes first by default
-- move away from generating html - instead store list of objects in a file (maybe paginated into multiple files if bigger than 1MB)
-- fetch tweets in batches dynamically (when scroll enough) with JS based on loaded file lists
-- load lists -> parse metadata -> load media -> show tweet
+- sort latest likes first by default (by id)
++ move away from generating html - instead store list of objects in a file (maybe paginated into multiple files if bigger than 1MB)
++ fetch tweets in batches dynamically (when scroll enough) with JS based on loaded file lists
++ load lists -> parse metadata -> load media -> show tweet
 - support multiple videos
 - add metadata filters and search (OP name, timestamp, sub-string search, content type, file size)
-- upon data upload update object list files
++ upon data upload update object list files
 - vibecode more ui/ux
+
+- search for damaged files, see if any can be restored, delete otherwise
 """
 if __name__ == "__main__":
     interactive_response_upload()

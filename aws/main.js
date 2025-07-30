@@ -1,7 +1,15 @@
+// Init state
 let allTweets = {}; // map: id → { id, filenames: [...], metadata: {...} }
 let idSequence = [];
 const BATCH_SIZE = 20;
 let nextIndex = 0;
+
+// Setup observer on the anchor
+const observer = new IntersectionObserver(onIntersect, {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+});
 
 const [listResp, metaResp] = await Promise.all([
     fetch("tweets_list_cache.txt"),
@@ -14,7 +22,14 @@ const [listText, metaText] = await Promise.all([listResp.text(), metaResp.text()
 parseListing(listText);
 parseJsonLines(metaText);
 updateSequence()
-resetView()
+
+// Run once DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', resetView);
+} else {
+    resetView();
+}
+
 
 // Parse text listing file: skip JSON filenames
 function parseListing(txt) {
@@ -59,7 +74,7 @@ function parseJsonLines(txt) {
 // Main sequence generator
 function updateSequence(){
     idSequence = [];
-    tweets.forEach(tweet => {idSequence.push(tweet.id)});
+    Object.values(allTweets).forEach(tweet => {idSequence.push(tweet.id)});
 }
 
 
@@ -72,12 +87,14 @@ function renderBatch() {
     });
     nextIndex += slice.length;
     if (nextIndex >= idSequence.length && observer) {
+        console.log("reached end, disconnecting observer...");
         observer.disconnect(); // no more to load
     }
 }
 
 // IntersectionObserver callback
 function onIntersect(entries) {
+    console.log("triggered onIntersect");
     entries.forEach(entry => {
         if (entry.isIntersecting && nextIndex < idSequence.length) {
             renderBatch();
@@ -85,29 +102,15 @@ function onIntersect(entries) {
     });
 }
 
-// Setup observer on the anchor
-const observer = new IntersectionObserver(onIntersect, {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.1
-});
 
 // Initialize gallery and observer
-function initInfiniteLoad() {
-    renderBatch(); // initial batch
-    const anchor = document.getElementById('scroll-anchor');
-    observer.observe(anchor);
-}
-
-// Run once DOM is ready
-window.addEventListener('DOMContentLoaded', initInfiniteLoad);
-
-
 function resetView(){
     const tweets_div = document.getElementById('tweets_div');
     tweets_div.innerHTML = '';
     nextIndex = 0;
     renderBatch();
+    const anchor = document.getElementById('scroll-anchor');
+    observer.observe(anchor);
 }
 
 // Renderer
@@ -172,20 +175,21 @@ function createTweetBlock(tweet_meta) {
 
 // Buttons
 
-function topFunction() {
+export function topFunction() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
 }
 
-function pauseAll() {
+export function pauseAll() {
     document.querySelectorAll('video').forEach(vid => vid.pause());
     document.querySelectorAll('.vid').forEach(i =>
         i.contentWindow.document.querySelectorAll('video').forEach(vid => vid.pause()));
 }
 
-function scrollTo() {
-    var val = document.getElementById("navigate_param").value;
-    tweets = document.querySelectorAll(".tweet");
+export function scrollTo() {
+    // todo 
+    const val = document.getElementById("navigate_param").value;
+    let tweets = document.querySelectorAll(".tweet");
     tweets[Math.floor(val / 100 * tweets.length)].scrollIntoView();
 }
 
@@ -207,14 +211,14 @@ function shuffle(array) {
     return array;
 }
 
-function shuffleTweets() {
-    tweets = document.querySelectorAll("#tweets_div .tweet")
-    tweets_copy = Array()
+export function shuffleTweets() {
+    let tweets = document.querySelectorAll("#tweets_div .tweet")
+    let tweets_copy = Array()
     tweets.forEach((t) => {
         tweets_copy.push(t.outerHTML)
     })
 
-    shuffled_ids = shuffle(Array.from(Array(tweets_copy.length).keys()))
+    let shuffled_ids = shuffle(Array.from(Array(tweets_copy.length).keys()))
 
     tweets.forEach((t) => {
         t.outerHTML = tweets_copy[shuffled_ids.pop()];
