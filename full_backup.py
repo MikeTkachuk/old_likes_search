@@ -314,7 +314,6 @@ def interactive_response_upload():
 
 
 
-# TODO cache list_objects_v2 requests on storage
 """
 Rework key-points:
 - sort latest likes first by default (by id)

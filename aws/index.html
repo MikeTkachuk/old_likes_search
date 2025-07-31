@@ -7,16 +7,41 @@
 </head>
 
 <body>
-<div id="controls">
-        <button id="shuffle" onclick="shuffleTweets();">Shuffle</button>
-        <button id="top" onclick="topFunction();">Top</button>
-        <button id="video_pause" onclick="pauseAll();">Pause all</button>
-        <input type="number" id="navigate_param" min="0" max="100" step="5">
-        <button id="navigate" onclick="scrollTo();">Go</button>
+<div id="header">
+    <button id="controls_button"
+            onclick="document.getElementById('controls').classList.toggle('visible');">
+        Controls
+    </button>
+    <div id="controls">
+        <button id="shuffle">Shuffle</button>
+        <button id="top">Top</button>
+        <button id="video_pause">Pause all</button>
+        <!--        <input type="number" id="navigate_param" min="0" max="100" step="5">-->
+        <!--        <button id="navigate" onclick="scrollTo();">Go</button>-->
+
+        <input type="text" id="search_box">
+        <label>
+            <input type="checkbox" id="reverse-toggle" checked/>
+            New first
+        </label>
+        <div class="checkbox-container">
+            <label>
+                <input type="checkbox" name="type" id="include_photo" checked/>
+                Image
+            </label>
+            <label>
+                <input type="checkbox" name="type" id="include_video" checked/>
+                Video
+            </label>
+            <label>
+                <input type="checkbox" name="type" id="include_other" checked/>
+                Other
+            </label>
+        </div>
+        <button id="search_button">Search</button>
+    </div>
 </div>
-<div id="menu"><ol>
-</ol></div>
-<div style="background-color:#909090; height: 2vh"></div>
+
 <div id="tweets_div"></div>
 <div id="scroll-anchor" style="height:10px"></div>
 </body>

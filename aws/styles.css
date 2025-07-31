@@ -2,9 +2,9 @@
     border: none;
     padding: 5px 10px;
     border-radius: 15px;
-    margin-bottom:5px;
-    width:auto;
-    display:table;
+    margin-bottom: 5px;
+    width: auto;
+    display: table;
     box-shadow: 0 3px #858e8e;
     background-color: #dad2d2
 }
@@ -21,33 +21,58 @@
     font-size: 3.5vw;
 }
 
-#controls{
+#header {
     position: fixed;
-    right: 0;
+    left: 0;
     top: 1vh;
-    max-width: 35vw;
+
 }
 
-#controls button{
+#controls {
+    transform: translateY(-120%);
+    z-index: 999; /* ensures it sits above other content */
+}
+
+#controls_button {
+    position: fixed;
+    top: 20px; /* distance from top */
+    right: 20px; /* distance from right edge */
+    margin: 0; /* no extra margin needed */
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 3vw;
+    z-index: 999; /* ensures it sits above other content */
+
+}
+
+#controls input {
     font-size: 3vw;
 }
-#controls input{
-    font-size: 3vw;
+
+#controls.visible {
+    transform: translateY(0);
 }
 
-
-.tweet{
+.checkbox-container {
+    display: flex;
+    flex-direction: column;
 }
+
+.tweet {
+}
+
 .image {
     width: 90vw;
     object-fit: contain;
     margin-bottom: 3vh;
 }
+
 .vid {
     height: 90vh;
     width: 90vw;
     object-fit: contain;
 }
+
 .gif {
     height: 90vh;
     width: 90vw;
