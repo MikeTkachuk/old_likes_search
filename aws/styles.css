@@ -1,33 +1,22 @@
-#menu li {
-    border: none;
-    padding: 5px 10px;
-    border-radius: 15px;
-    margin-bottom: 5px;
-    width: auto;
-    display: table;
-    box-shadow: 0 3px #858e8e;
-    background-color: #dad2d2
-}
-
-#menu li:active {
-    background-color: #9da19e;
-    box-shadow: 0 1px #666;
-    transform: translateY(2px);
-}
-
-
-#menu {
-    background-color: #f0eeee;
-    font-size: 3.5vw;
-}
-
 #header {
     position: fixed;
     left: 0;
     top: 1vh;
     font-size: 3vw;
     background-color: rgba(248, 225, 155, 0.32);
-    float: right;
+    width: 100vw;
+}
+
+#header button,
+#header text,
+#header label,
+#header input {
+    font-size: 3vh;
+}
+
+#header input[type="checkbox"] {
+    width: 3vh;
+    height: 3vh;
 }
 
 #controls {
@@ -36,22 +25,18 @@
 }
 
 #controls_button {
-    top: 20px; /* distance from top */
-    right: 20px; /* distance from right edge */
-    margin: 0; /* no extra margin needed */
+    margin-right: 20px;
     padding: 8px 12px;
     cursor: pointer;
-    font-size: 3vw;
     z-index: 999;
-}
-
-#controls input {
-    font-size: 3vw;
+    float: right;
+    right: 0;
 }
 
 #controls.visible {
     display: block;
     z-index: 999;
+    background-color: rgba(248, 225, 155, 1.0);
 }
 
 .checkbox-container {
@@ -59,19 +44,23 @@
     flex-direction: column;
 }
 
-.tweet {
+.tweet text {
+    font-size: 2vh;
 }
 
 .image {
     width: 90vw;
+    max-height: 90vh;
     object-fit: contain;
     margin-bottom: 3vh;
+    z-index: 1;
 }
 
 .vid {
     height: 90vh;
     width: 90vw;
     object-fit: contain;
+    z-index: 1;
 }
 
 .gif {
