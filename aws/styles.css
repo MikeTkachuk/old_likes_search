@@ -1,10 +1,11 @@
 #header {
     position: fixed;
     left: 0;
-    top: 1vh;
+    top: 0;
     font-size: 3vw;
     background-color: rgba(248, 225, 155, 0.32);
     width: 100vw;
+    padding: 1vw;
 }
 
 #header button,

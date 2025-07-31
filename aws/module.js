@@ -243,7 +243,7 @@ function createTweetBlock(tweet_meta) {
             mediaEl.muted = true;
             mediaEl.playsInline = true;
             mediaEl.loading = 'lazy';
-            addFullScreenCallback(mediaEl);
+            // addFullScreenCallback(mediaEl);  // todo
         }
         loadWithRetry(mediaEl);
         mediaContainer.appendChild(mediaEl);
@@ -302,6 +302,8 @@ const image_dialog = document.getElementById('fullMedia');
 const dialog_container = document.getElementById('fullMediaContainer');
 
 async function openFull(elem) {
+    dialog_container.style.height = '100vh';
+    dialog_container.style.width = '100vw';
     try {
         if (elem.requestFullscreen) {
             await elem.requestFullscreen();
@@ -314,6 +316,8 @@ async function openFull(elem) {
 }
 
 function closeFull() {
+    dialog_container.style.height = '0vh';
+    dialog_container.style.width = '0vw';
     if (document.fullscreenElement) {
         document.exitFullscreen();
     }
