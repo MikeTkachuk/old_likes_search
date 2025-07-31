@@ -2,7 +2,7 @@
 import {pauseAll, resetView, shuffleSequence, topFunction, updateSequence} from "./module.js";
 
 document.getElementById('search_button')
-    .addEventListener('click', () => {
+    .addEventListener('click', () =>  {
         updateSequence();
         resetView();
     });

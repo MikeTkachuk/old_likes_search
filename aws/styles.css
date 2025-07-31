@@ -25,24 +25,24 @@
     position: fixed;
     left: 0;
     top: 1vh;
-
+    font-size: 3vw;
+    background-color: rgba(248, 225, 155, 0.32);
+    float: right;
 }
 
 #controls {
-    transform: translateY(-120%);
-    z-index: 999; /* ensures it sits above other content */
+    display: none;
+    z-index: -1;
 }
 
 #controls_button {
-    position: fixed;
     top: 20px; /* distance from top */
     right: 20px; /* distance from right edge */
     margin: 0; /* no extra margin needed */
     padding: 8px 12px;
     cursor: pointer;
     font-size: 3vw;
-    z-index: 999; /* ensures it sits above other content */
-
+    z-index: 999;
 }
 
 #controls input {
@@ -50,7 +50,8 @@
 }
 
 #controls.visible {
-    transform: translateY(0);
+    display: block;
+    z-index: 999;
 }
 
 .checkbox-container {

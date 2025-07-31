@@ -8,7 +8,14 @@ let nextIndex = 0;
 const observer = new IntersectionObserver(onIntersect, {
     root: null, rootMargin: '0px', threshold: 0.1
 });
-
+const anchor = document.getElementById('scroll-anchor');
+function observe(){
+    observer.observe(anchor);
+}
+function unobserve(){
+    observer.unobserve(anchor);
+}
+let renderLock = 0;
 const [listResp, metaResp] = await Promise.all([fetch("tweets_list_cache.txt"), fetch("tweets_metadata_cache.txt")]);
 if (!listResp.ok || !metaResp.ok) {
     throw new Error('Failed to fetch files');
@@ -97,18 +104,28 @@ export function updateSequence() {
 
 // Render the next batch of items into gallery
 async function renderBatch() {
+    if (renderLock === 1){
+        return;
+    }
+    else{
+        renderLock = 1;
+    }
+    unobserve();
     const tweets_div = document.getElementById('tweets_div');
     const slice = idSequence.slice(nextIndex, nextIndex + BATCH_SIZE);
     for (const s of slice) {
+        console.log(s)
         let el = createTweetBlock(allTweets[s].metadata);
         tweets_div.appendChild(el);
-        await wait(200);
+        await wait(100);
     }
     nextIndex += slice.length;
-    if (nextIndex >= idSequence.length && observer) {
+    if (nextIndex < idSequence.length) {
+        observe();
+    } else {
         console.log("reached end, disconnecting observer...");
-        observer.disconnect(); // no more to load
     }
+    renderLock = 0;
 }
 
 // IntersectionObserver callback
@@ -125,18 +142,19 @@ function onIntersect(entries) {
 
 // Initialize gallery and observer
 export function resetView() {
+    if (renderLock === 1){
+        return;
+    }
     const tweets_div = document.getElementById('tweets_div');
     tweets_div.innerHTML = '';
 
     nextIndex = 0;
     renderBatch().then(() => {
     });
-    const anchor = document.getElementById('scroll-anchor');
-    observer.observe(anchor);
 }
 
 // Renderer
-function loadWithRetry(el, maxRetries=3) {
+function loadWithRetry(el, maxRetries = 3) {
     let attempts = 0;
 
     return new Promise(resolve => {
@@ -158,9 +176,9 @@ function loadWithRetry(el, maxRetries=3) {
                 }
             };
 
-            el.addEventListener('load', onSuccess, { once: true });
-            el.addEventListener('loadeddata', onSuccess, { once: true });
-            el.addEventListener('error', onError, { once: true });
+            el.addEventListener('load', onSuccess, {once: true});
+            el.addEventListener('loadeddata', onSuccess, {once: true});
+            el.addEventListener('error', onError, {once: true});
 
             function cleanup() {
                 el.removeEventListener('load', onSuccess);
@@ -190,6 +208,7 @@ function createTweetBlock(tweet_meta) {
 
     const linkEl = document.createElement('a');
     linkEl.href = tweet_meta.link;
+    linkEl.target = "_blank";
     linkEl.textContent = '[link]';
     contentDiv.appendChild(linkEl);
 
@@ -214,6 +233,7 @@ function createTweetBlock(tweet_meta) {
             mediaEl.className = 'image';
             mediaEl.src = mediaUrl;
             mediaEl.loading = 'lazy';
+            addFullScreenCallback(mediaEl);
         } else {
             mediaEl = document.createElement('video');
             mediaEl.className = 'gif';
@@ -223,6 +243,7 @@ function createTweetBlock(tweet_meta) {
             mediaEl.muted = true;
             mediaEl.playsInline = true;
             mediaEl.loading = 'lazy';
+            addFullScreenCallback(mediaEl);
         }
         loadWithRetry(mediaEl);
         mediaContainer.appendChild(mediaEl);
@@ -275,3 +296,51 @@ function shuffle(array) {
 export function shuffleSequence() {
     shuffle(idSequence);
 }
+
+// Fullscreen
+const image_dialog = document.getElementById('fullMedia');
+const dialog_container = document.getElementById('fullMediaContainer');
+
+async function openFull(elem) {
+    try {
+        if (elem.requestFullscreen) {
+            await elem.requestFullscreen();
+        } else {
+            elem.showModal();
+        }
+    } catch (err) {
+        elem.showModal();
+    }
+}
+
+function closeFull() {
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+    }
+    if (image_dialog.open) {
+        image_dialog.close();
+    }
+}
+
+function addFullScreenCallback(el) {
+    el.addEventListener('click', () => {
+        const img = document.createElement('img');
+        img.src = el.src; // assuming full resolution
+        img.style.maxWidth = '100vw';
+        img.style.maxHeight = '100vh';
+        img.style.objectFit = 'contain';
+
+        dialog_container.innerHTML = ''; // clear old
+        dialog_container.appendChild(img);
+        openFull(image_dialog);
+    });
+}
+
+// Close on Esc or mobile back gesture
+image_dialog.addEventListener('cancel', closeFull);       // mobile back press
+document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) image_dialog.close();
+});
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeFull();
+});
