@@ -302,8 +302,7 @@ const image_dialog = document.getElementById('fullMedia');
 const dialog_container = document.getElementById('fullMediaContainer');
 
 async function openFull(elem) {
-    dialog_container.style.height = '100vh';
-    dialog_container.style.width = '100vw';
+
     try {
         if (elem.requestFullscreen) {
             await elem.requestFullscreen();
@@ -316,8 +315,7 @@ async function openFull(elem) {
 }
 
 function closeFull() {
-    dialog_container.style.height = '0vh';
-    dialog_container.style.width = '0vw';
+
     if (document.fullscreenElement) {
         document.exitFullscreen();
     }
@@ -330,9 +328,6 @@ function addFullScreenCallback(el) {
     el.addEventListener('click', () => {
         const img = document.createElement('img');
         img.src = el.src; // assuming full resolution
-        img.style.maxWidth = '100vw';
-        img.style.maxHeight = '100vh';
-        img.style.objectFit = 'contain';
 
         dialog_container.innerHTML = ''; // clear old
         dialog_container.appendChild(img);
