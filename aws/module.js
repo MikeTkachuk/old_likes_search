@@ -343,3 +343,4 @@ document.addEventListener('fullscreenchange', () => {
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeFull();
 });
+document.getElementById('fullMediaClose').addEventListener('click', closeFull);

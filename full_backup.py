@@ -324,8 +324,8 @@ Rework key-points:
 + add metadata filters and search (OP name, timestamp, sub-string search, content type, file size)
 + upon data upload update object list files
 - make control header semi opaque, adjust font size for phone, when closed make div zindex lower
-- on image click view full size, cross top right/back gesture to close
-- make links open in new tab
++ on image click view full size, cross top right/back gesture to close
++ make links open in new tab
 
 - search for damaged files, see if any can be restored, delete otherwise
 """

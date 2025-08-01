@@ -84,15 +84,28 @@
     max-width: none;
     max-height: none;
 }
+
 #fullMedia::backdrop {
-    background-color: rgba(0,0,0,0.9);
+    background-color: rgba(0, 0, 0, 0.9);
 }
+
 #fullMediaContainer {
     width: 100vw;
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+#fullMediaClose {
+    position: fixed;
+    right: 1vw;
+    top: 1vh;
+    padding: 3vh;
+    font-size: 3vh;
+    border: 0;
+    background-color: rgba(152, 152, 152, 0.10);
+    color: white;
 }
 
 #fullMediaContainer img {
