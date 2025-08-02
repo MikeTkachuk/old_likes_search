@@ -302,7 +302,6 @@ def interactive_response_upload():
                     ))
                     list_cache.update("\n".join([r for r in upload_reports if r]) + "\n", sync=True)
                     meta_cache.update("\n".join([json.dumps(t) for t in to_upload]) + "\n", sync=True)
-                    # success_stats.append(upload_tweet(extract_info(tweet)))  # todo: debug what this line does, maybe remove
                     print("# tweets provided:", len(upload_reports),
                           " # tweets uploaded:", sum([bool(s) for s in upload_reports]))
 
