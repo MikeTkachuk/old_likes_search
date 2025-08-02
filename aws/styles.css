@@ -1,55 +1,115 @@
-#menu li {
-    border: none;
-    padding: 5px 10px;
-    border-radius: 15px;
-    margin-bottom:5px;
-    width:auto;
-    display:table;
-    box-shadow: 0 3px #858e8e;
-    background-color: #dad2d2
-}
-
-#menu li:active {
-    background-color: #9da19e;
-    box-shadow: 0 1px #666;
-    transform: translateY(2px);
-}
-
-
-#menu {
-    background-color: #f0eeee;
-    font-size: 3.5vw;
-}
-
-#controls{
+#header {
     position: fixed;
+    left: 0;
+    top: 0;
+    font-size: 3vw;
+    background-color: rgba(248, 225, 155, 0.32);
+    width: 100vw;
+    padding: 1vw;
+}
+
+#header button,
+#header text,
+#header label,
+#header input {
+    font-size: 3vh;
+}
+
+#header input[type="checkbox"] {
+    width: 3vh;
+    height: 3vh;
+}
+
+#controls {
+    display: none;
+    z-index: -1;
+}
+
+#controls_button {
+    margin-right: 20px;
+    padding: 8px 12px;
+    cursor: pointer;
+    z-index: 999;
+    float: right;
     right: 0;
-    top: 1vh;
-    max-width: 35vw;
 }
 
-#controls button{
-    font-size: 3vw;
-}
-#controls input{
-    font-size: 3vw;
+#controls.visible {
+    display: block;
+    z-index: 999;
+    background-color: rgba(248, 225, 155, 1.0);
 }
 
-
-.tweet{
+.checkbox-container {
+    display: flex;
+    flex-direction: column;
 }
+
+.tweet text {
+    font-size: 2vh;
+}
+
 .image {
     width: 90vw;
+    max-height: 90vh;
     object-fit: contain;
     margin-bottom: 3vh;
+    z-index: 1;
 }
+
 .vid {
     height: 90vh;
     width: 90vw;
     object-fit: contain;
+    z-index: 1;
 }
+
 .gif {
     height: 90vh;
     width: 90vw;
+    object-fit: contain;
+    z-index: 1;
+}
+
+#fullMedia {
+    position: fixed;
+    inset: 0;
+    border: none;
+    padding: 0;
+    background: transparent;
+    margin: 0;
+    z-index: 10000;
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+}
+
+#fullMedia::backdrop {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+#fullMediaContainer {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#fullMediaClose {
+    position: fixed;
+    right: 1vw;
+    top: 1vh;
+    padding: 3vh;
+    font-size: 3vh;
+    border: 0;
+    background-color: rgba(152, 152, 152, 0.10);
+    color: white;
+}
+
+#fullMediaContainer img {
+    width: 98vw;
+    height: 98vh;
     object-fit: contain;
 }

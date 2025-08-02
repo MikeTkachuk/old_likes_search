@@ -33,7 +33,7 @@ def extract_info(tweet_json):
                 info['media_urls'].append((url, x['type']))
             elif x["type"] in ["video", "animated_gif"]:
                 variants = x["video_info"]["variants"]
-                variants.sort(key=lambda x: x.get("bitrate", 0))
+                variants.sort(key=lambda xx: xx.get("bitrate", 0))
                 url = variants[-1]["url"].rsplit("?tag")[0]
                 info['media_urls'].append((url, x['type']))
     return info
