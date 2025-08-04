@@ -6,6 +6,7 @@
     background-color: rgba(248, 225, 155, 0.32);
     width: 100vw;
     padding: 1vw;
+    z-index: 999;
 }
 
 #header button,
@@ -22,21 +23,18 @@
 
 #controls {
     display: none;
-    z-index: -1;
 }
 
 #controls_button {
     margin-right: 20px;
     padding: 8px 12px;
     cursor: pointer;
-    z-index: 999;
     float: right;
     right: 0;
 }
 
 #controls.visible {
     display: block;
-    z-index: 999;
     background-color: rgba(248, 225, 155, 1.0);
 }
 

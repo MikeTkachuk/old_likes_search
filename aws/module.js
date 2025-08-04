@@ -76,6 +76,7 @@ export function updateSequence() {
     idSequence = [];
     let tweets = Object.values(allTweets);
     const term = document.getElementById('search_box').value.trim().toLowerCase();
+    const matchId = term.startsWith("id=") ? term.split("=")[1] : false;
     const isReverse = document.getElementById('reverse-toggle').checked;
     const allMediaTypes = ['photo', 'video'];
     let mediaTypes = [];
@@ -88,7 +89,12 @@ export function updateSequence() {
     }
 
     idSequence = tweets.filter(obj => {
-        const textMatch = !term || (obj.metadata?.text.toLowerCase().includes(term) ?? false);
+        let textMatch;
+        if (matchId){
+            textMatch = obj.id.startsWith(matchId);
+        } else {
+            textMatch = !term || (obj.metadata?.text.toLowerCase().includes(term) ?? false);
+        }
 
         const typeMatch = obj.metadata?.media_urls?.some(([, type]) => mediaTypes.includes(type) || (!allMediaTypes.includes(type) && mediaTypeOther)) ?? false;
 
@@ -99,6 +105,7 @@ export function updateSequence() {
         const idB = BigInt(b);
         return isReverse ? Number(idB - idA) : Number(idA - idB);
     });
+    document.getElementById("search_stats").innerHTML = `count=${idSequence.length}`;
 }
 
 
