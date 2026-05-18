@@ -173,17 +173,30 @@ def get_tweet_iterator_from_response(response_dict):
     entries = response_dict['data']['user']['result']['timeline']['timeline']['instructions'][0]['entries']
     for entry in entries:
         if 'itemContent' in entry['content']:
-            result = entry['content']['itemContent']['tweet_results']['result']
+            result = entry['content']['itemContent']['tweet_results'].get('result')
+            if result is None:
+                print("Tweet result is None")
+                continue
             if 'legacy' in result:
                 tweet_dict = result['legacy']
             else:
                 tweet_dict = result['tweet']['legacy']
-            try:  # try get user name
+
+            # parse user metadata
+            try:
                 user_name = result['core']['user_results']['result']['legacy']['name']
-                user_id = result['core']['user_results']['result']['rest_id']
                 tweet_dict['user_name'] = user_name
+            except KeyError as e:
+                pass
+            try:
+                user_name = result['core']['user_results']['result']['core']['name']
+                tweet_dict['user_name'] = user_name
+            except KeyError as e:
+                pass
+            try:
+                user_id = result['core']['user_results']['result']['rest_id']
                 tweet_dict['user_id'] = user_id
-            except KeyError:
+            except KeyError as e:
                 pass
             yield tweet_dict
 
@@ -311,5 +324,19 @@ def interactive_response_upload():
                     traceback.print_exc()
 
 
+"""
+Rework key-points:
++ sort latest likes first by default (by id)
++ move away from generating html - instead store list of objects in a file (maybe paginated into multiple files if bigger than 1MB)
++ fetch tweets in batches dynamically (when scroll enough) with JS based on loaded file lists
++ load lists -> parse metadata -> load media -> show tweet
++ support multiple videos
++ add metadata filters and search (OP name, timestamp, sub-string search, content type, file size)
++ upon data upload update object list files
+- make control header semi opaque, adjust font size for phone, when closed make div zindex lower
++ on image click view full size, cross top right/back gesture to close
++ make links open in new tab
+
+"""
 if __name__ == "__main__":
     interactive_response_upload()
